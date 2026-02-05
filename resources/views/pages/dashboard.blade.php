@@ -125,7 +125,7 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-2xl overflow-hidden">
-                        <img src="./assets/img/logo.svg" alt="Logo" class="w-full h-full object-contain">
+                        <img src="{{ asset('them2/assets/img/logo.svg') }}" alt="Logo" class="w-full h-full object-contain">
                     </div>
                 </div>
                 <div class="flex items-center gap-3 sm:gap-6">
@@ -170,7 +170,7 @@
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">John Doe</span>
                         <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-sm font-semibold">JD</div>
                     </div>
-                    <a href="logout.html" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-full transition-all">
+                    <a href="{{ route('home') }}" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-full transition-all">
                         Logout
                     </a>
                 </div>
@@ -199,7 +199,7 @@
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
                                 <h2 class="text-xl sm:text-2xl font-bold">Username</h2>
-                                <img src="./assets/img/educated-label.svg" alt="Educated" class="h-6">
+                                <img src="{{ asset('them2/assets/img/educated-label.svg') }}" alt="Educated" class="h-6">
                             </div>
                             <div class="flex items-center gap-2 text-gray-400 text-sm mb-3">
                                 <span>Kurdistan Rojava</span>
@@ -225,7 +225,7 @@
                         <div class="glass-card-light rounded-2xl p-4 text-center min-w-[140px]">
                             <p class="text-xs text-gray-400 mb-1">Balance</p>
                             <div class="flex items-center justify-center gap-2">
-                                <img src="./assets/icons/currency.svg" alt="Currency" class="w-5 h-5">
+                                <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="Currency" class="w-5 h-5">
                                 <span class="text-xl font-bold text-accent-gold">500.00</span>
                             </div>
                             <span class="cashback-badge text-xs px-2 py-0.5 rounded-full text-white mt-2 inline-block">5% CASHBACK</span>
@@ -240,7 +240,7 @@
                         <!-- Shop Card 1 -->
                         <div class="shop-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
                             <div class="relative h-44 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                                <img src="./assets/img/shop-photo-1.jpg" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="{{ asset('them2/assets/img/shop-photo-1.jpg') }}" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="hidden absolute inset-0 items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800">
                                     <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 </div>
@@ -278,7 +278,7 @@
                         <!-- Shop Card 2 -->
                         <div class="shop-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
                             <div class="relative h-44 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                                <img src="./assets/img/shop-photo-2.jpg" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="{{ asset('them2/assets/img/shop-photo-2.jpg') }}" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="hidden absolute inset-0 items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800">
                                     <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 </div>
@@ -316,7 +316,7 @@
                         <!-- Shop Card 3 -->
                         <div class="shop-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
                             <div class="relative h-44 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                                <img src="./assets/img/shop-photo-3.jpg" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="{{ asset('them2/assets/img/shop-photo-3.jpg') }}" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="hidden absolute inset-0 items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800">
                                     <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 </div>
@@ -370,18 +370,18 @@
                                 <span class="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500 text-white">Currently Activated</span>
                             </div>
                             <div class="mb-2">
-                                <img src="assets/img/cultivated-label.svg" alt="Cultivated" class="h-12">
+                                <img src="{{ asset('them2/assets/img/cultivated-label.svg') }}" alt="Cultivated" class="h-12">
                             </div>
                             <div class="mb-4">
                                 <p class="text-sm text-emerald-500 font-medium">Current access</p>
                             </div>
                             <div class="flex items-center gap-1 mb-4">
-                                <img src="assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                                <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="Zer" class="w-8 h-8">
                                 <span class="text-5xl font-bold text-gray-900">0.00</span>
                             </div>
                             <p class="text-sm text-gray-500 mb-6 leading-relaxed text-center">For individual use with 30 summaries a month, no ads, and basic support.</p>
                             <div class="flex justify-center mb-6">
-                                <img src="assets/img/cultivated-service.svg" alt="Cultivated features" class="h-16">
+                                <img src="{{ asset('them2/assets/img/cultivated-service.svg') }}" alt="Cultivated features" class="h-16">
                             </div>
                             <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
                                 <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Follow Users</li>
@@ -403,18 +403,18 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <img src="assets/img/educated-label.svg" alt="Educated" class="h-12">
+                                <img src="{{ asset('them2/assets/img/educated-label.svg') }}" alt="Educated" class="h-12">
                             </div>
                             <div class="mb-4">
                                 <p class="text-sm text-emerald-500 font-medium">Manage access</p>
                             </div>
                             <div class="flex items-center gap-1 mb-4">
-                                <img src="assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                                <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="Zer" class="w-8 h-8">
                                 <span class="text-5xl font-bold text-gray-900">0.00</span>
                             </div>
                             <p class="text-sm text-gray-500 mb-6 leading-relaxed text-center">Unlimited summaries, customization, quick support, & app integrations for professionals.</p>
                             <div class="flex justify-center mb-6">
-                                <img src="assets/img/educated-service.svg" alt="Educated features" class="h-16">
+                                <img src="{{ asset('them2/assets/img/educated-service.svg') }}" alt="Educated features" class="h-16">
                             </div>
                             <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
                                 <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Follow Users</li>
@@ -446,12 +446,12 @@
                                 <p class="text-sm text-emerald-500 font-medium">Manage access</p>
                             </div>
                             <div class="flex items-center gap-1 mb-4">
-                                <img src="assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                                <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="Zer" class="w-8 h-8">
                                 <span class="text-5xl font-bold text-gray-900">0.00</span>
                             </div>
                             <p class="text-sm text-gray-500 mb-6 leading-relaxed text-center">Team-focused with priority support, API access, and advanced security options.</p>
                             <div class="flex justify-center mb-6">
-                                <img src="assets/img/academic-service.svg" alt="Academic features" class="h-20">
+                                <img src="{{ asset('them2/assets/img/academic-service.svg') }}" alt="Academic features" class="h-20">
                             </div>
                             <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
                                 <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Follow Users</li>
@@ -479,7 +479,7 @@
                         <!-- Bronze Playlist -->
                         <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
                             <div class="relative h-44 overflow-hidden">
-                                <img src="./assets/img/bronze-playlist.svg" alt="Bronze Playlist" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/bronze-playlist.svg') }}" alt="Bronze Playlist" class="w-full h-full object-cover">
                                 <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
                             </div>
                             <div class="p-4 text-gray-800">
@@ -493,7 +493,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="font-bold text-emerald-500">50 Songs</span>
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-orange-500">1000</span>
                                     </div>
                                 </div>
@@ -513,7 +513,7 @@
                         <!-- Silver Playlist -->
                         <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
                             <div class="relative h-44 overflow-hidden">
-                                <img src="./assets/img/silver-playlist.svg" alt="Silver Playlist" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/silver-playlist.svg') }}" alt="Silver Playlist" class="w-full h-full object-cover">
                                 <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
                             </div>
                             <div class="p-4 text-gray-800">
@@ -527,7 +527,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="font-bold text-emerald-500">75 Songs</span>
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-orange-500">1000</span>
                                     </div>
                                 </div>
@@ -547,7 +547,7 @@
                         <!-- Gold Playlist -->
                         <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
                             <div class="relative h-44 overflow-hidden">
-                                <img src="./assets/img/gold-playlist.svg" alt="Gold Playlist" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/gold-playlist.svg') }}" alt="Gold Playlist" class="w-full h-full object-cover">
                                 <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
                             </div>
                             <div class="p-4 text-gray-800">
@@ -561,7 +561,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="font-bold text-emerald-500">100 Songs</span>
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-orange-500">1000</span>
                                     </div>
                                 </div>
@@ -588,7 +588,7 @@
                         <!-- Bronze Stream -->
                         <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
                             <div class="relative h-44 overflow-hidden">
-                                <img src="./assets/img/bronze-stream.svg" alt="Bronze Stream" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/bronze-stream.svg') }}" alt="Bronze Stream" class="w-full h-full object-cover">
                                 <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
                             </div>
                             <div class="p-4 text-gray-800">
@@ -602,7 +602,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="font-bold text-emerald-500">60 Min</span>
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-orange-500">500</span>
                                     </div>
                                 </div>
@@ -622,7 +622,7 @@
                         <!-- Silver Stream -->
                         <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
                             <div class="relative h-44 overflow-hidden">
-                                <img src="./assets/img/silver-stream.svg" alt="Silver Stream" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/silver-stream.svg') }}" alt="Silver Stream" class="w-full h-full object-cover">
                                 <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
                             </div>
                             <div class="p-4 text-gray-800">
@@ -636,7 +636,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="font-bold text-emerald-500">120 Min</span>
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-orange-500">900</span>
                                     </div>
                                 </div>
@@ -656,7 +656,7 @@
                         <!-- Gold Stream -->
                         <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
                             <div class="relative h-44 overflow-hidden">
-                                <img src="./assets/img/gold-stream.svg" alt="Gold Stream" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/gold-stream.svg') }}" alt="Gold Stream" class="w-full h-full object-cover">
                                 <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
                             </div>
                             <div class="p-4 text-gray-800">
@@ -670,7 +670,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="font-bold text-emerald-500">180 Min</span>
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-orange-500">1200</span>
                                     </div>
                                 </div>
@@ -697,7 +697,7 @@
                         <!-- Bronze Pack -->
                         <div class="package-card rounded-2xl overflow-hidden shadow-lg">
                             <div class="h-48 overflow-hidden">
-                                <img src="./assets/img/bronze-pack.svg" alt="Bronze Pack" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/bronze-pack.svg') }}" alt="Bronze Pack" class="w-full h-full object-cover">
                             </div>
                             <div class="p-4 text-gray-800">
                                 <div class="flex items-center justify-between mb-2">
@@ -706,7 +706,7 @@
                                 </div>
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-orange-500">1000</span>
                                     </div>
                                     <span class="font-bold text-cyan-600">€ 49.99</span>
@@ -742,7 +742,7 @@
                         <!-- Silver Pack -->
                         <div class="package-card rounded-2xl overflow-hidden shadow-lg">
                             <div class="h-48 overflow-hidden">
-                                <img src="./assets/img/silver-pack.svg" alt="Silver Pack" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/silver-pack.svg') }}" alt="Silver Pack" class="w-full h-full object-cover">
                             </div>
                             <div class="p-4 text-gray-800">
                                 <div class="flex items-center justify-between mb-2">
@@ -751,7 +751,7 @@
                                 </div>
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-gray-500">1000</span>
                                     </div>
                                     <span class="font-bold text-cyan-600">€ 49.99</span>
@@ -787,7 +787,7 @@
                         <!-- Gold Pack -->
                         <div class="package-card rounded-2xl overflow-hidden shadow-lg">
                             <div class="h-48 overflow-hidden">
-                                <img src="./assets/img/gold-pack.svg" alt="Gold Pack" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/gold-pack.svg') }}" alt="Gold Pack" class="w-full h-full object-cover">
                             </div>
                             <div class="p-4 text-gray-800">
                                 <div class="flex items-center justify-between mb-2">
@@ -796,7 +796,7 @@
                                 </div>
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-yellow-500">1000</span>
                                     </div>
                                     <span class="font-bold text-cyan-600">€ 49.99</span>
@@ -838,7 +838,7 @@
                         <!-- Titanium Pack -->
                         <div class="package-card rounded-2xl overflow-hidden shadow-lg">
                             <div class="h-48 overflow-hidden bg-gradient-to-br from-gray-300 to-gray-400">
-                                <img src="./assets/img/titanium-pack.svg" alt="Titanium Pack" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/titanium-pack.svg') }}" alt="Titanium Pack" class="w-full h-full object-cover">
                             </div>
                             <div class="p-4 text-gray-800">
                                 <div class="flex items-center justify-between mb-2">
@@ -847,7 +847,7 @@
                                 </div>
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-gray-600">1000</span>
                                     </div>
                                     <span class="font-bold text-cyan-600">€ 49.99</span>
@@ -863,7 +863,7 @@
                         <!-- Platinum Pack -->
                         <div class="package-card rounded-2xl overflow-hidden shadow-lg">
                             <div class="h-48 overflow-hidden bg-gradient-to-br from-gray-400 to-gray-500">
-                                <img src="./assets/img/platinum-pack.svg" alt="Platinum Pack" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/platinum-pack.svg') }}" alt="Platinum Pack" class="w-full h-full object-cover">
                             </div>
                             <div class="p-4 text-gray-800">
                                 <div class="flex items-center justify-between mb-2">
@@ -872,7 +872,7 @@
                                 </div>
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-gray-500">1000</span>
                                     </div>
                                     <span class="font-bold text-cyan-600">€ 49.99</span>
@@ -888,7 +888,7 @@
                         <!-- Rhodium Pack -->
                         <div class="package-card rounded-2xl overflow-hidden shadow-lg">
                             <div class="h-48 overflow-hidden bg-gradient-to-br from-gray-800 to-black">
-                                <img src="./assets/img/diamond-pack.svg" alt="Rhodium Pack" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/diamond-pack.svg') }}" alt="Rhodium Pack" class="w-full h-full object-cover">
                             </div>
                             <div class="p-4 text-gray-800">
                                 <div class="flex items-center justify-between mb-2">
@@ -897,7 +897,7 @@
                                 </div>
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-1">
-                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                         <span class="font-bold text-yellow-600">1000</span>
                                     </div>
                                     <span class="font-bold text-cyan-600">€ 49.99</span>
@@ -931,7 +931,7 @@
                         <!-- Cart Item 1 - Gold Pack -->
                         <div class="flex items-center gap-3 py-3 border-b border-gray-100">
                             <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-yellow-400 to-yellow-600">
-                                <img src="./assets/img/gold-pack.svg" alt="Gold Pack" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/gold-pack.svg') }}" alt="Gold Pack" class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h4 class="font-bold text-gray-900 text-sm">Gold Pack</h4>
@@ -953,7 +953,7 @@
                         <!-- Cart Item 2 - Gold List -->
                         <div class="flex items-center gap-3 py-3 border-b border-gray-100">
                             <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                                <img src="./assets/img/gold-playlist.svg" alt="Gold List" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/gold-playlist.svg') }}" alt="Gold List" class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h4 class="font-bold text-gray-900 text-sm">Gold list</h4>
@@ -962,7 +962,7 @@
                             </div>
                             <div class="text-right flex-shrink-0">
                                 <div class="flex items-center gap-1 justify-end">
-                                    <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                    <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                     <span class="font-bold text-emerald-500">475.00</span>
                                 </div>
                                 <span class="text-xs text-gray-400 line-through">500.00</span>
@@ -975,7 +975,7 @@
                         <!-- Cart Item 3 - Silver Stream -->
                         <div class="flex items-center gap-3 py-3 border-b border-gray-100">
                             <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                                <img src="./assets/img/silver-stream.svg" alt="Silver" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/silver-stream.svg') }}" alt="Silver" class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h4 class="font-bold text-gray-900 text-sm">Silver</h4>
@@ -984,7 +984,7 @@
                             </div>
                             <div class="text-right flex-shrink-0">
                                 <div class="flex items-center gap-1 justify-end">
-                                    <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                    <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                     <span class="font-bold text-emerald-500">475.00</span>
                                 </div>
                                 <span class="text-xs text-gray-400 line-through">500.00</span>
@@ -997,7 +997,7 @@
                         <!-- Cart Item 4 - Upgrade Academic -->
                         <div class="flex items-center gap-3 py-3 border-b border-gray-100">
                             <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                                <img src="./assets/img/academic-service.svg" alt="Upgrade" class="w-full h-full object-cover">
+                                <img src="{{ asset('them2/assets/img/academic-service.svg') }}" alt="Upgrade" class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h4 class="font-bold text-gray-900 text-sm">Upgrade</h4>
@@ -1006,7 +1006,7 @@
                             </div>
                             <div class="text-right flex-shrink-0">
                                 <div class="flex items-center gap-1 justify-end">
-                                    <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                    <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-4 h-4">
                                     <span class="font-bold text-emerald-500">475.00</span>
                                 </div>
                                 <span class="text-xs text-gray-400 line-through">500.00</span>
@@ -1026,14 +1026,14 @@
                         </div>
                         <div class="flex items-center justify-between text-sm">
                             <div class="flex items-center gap-2">
-                                <img src="./assets/icons/cashback-badge.svg" alt="5% Cashback" class="h-6">
+                                <img src="{{ asset('them2/assets/icons/cashback-badge.svg') }}" alt="5% Cashback" class="h-6">
                                 <span class="text-gray-500">YekBûn 5%</span>
                             </div>
                             <span class="text-gray-900">€ 50.00</span>
                         </div>
                         <div class="flex items-center justify-between text-sm">
                             <div class="flex items-center gap-2">
-                                <img src="./assets/icons/cashback-badge.svg" alt="5% Cashback" class="h-6">
+                                <img src="{{ asset('them2/assets/icons/cashback-badge.svg') }}" alt="5% Cashback" class="h-6">
                                 <span class="text-gray-500">YekBun 5%</span>
                             </div>
                             <span class="text-gray-900">€ 50.00</span>
@@ -1046,7 +1046,7 @@
                         </div>
                         <div class="flex items-center justify-between text-sm">
                             <div class="flex items-center gap-2">
-                                <img src="./assets/icons/cashback-badge.svg" alt="5% Cashback" class="h-6">
+                                <img src="{{ asset('them2/assets/icons/cashback-badge.svg') }}" alt="5% Cashback" class="h-6">
                                 <span class="text-gray-500">YekBun 5%</span>
                             </div>
                             <span class="text-gray-900">€ 50.00</span>
@@ -1056,7 +1056,7 @@
                     <div class="flex items-center justify-between mb-6 pt-4 border-t border-gray-200">
                         <span class="font-bold text-emerald-500">To Pay</span>
                         <div class="flex items-center gap-1">
-                            <img src="./assets/icons/currency.svg" alt="" class="w-5 h-5">
+                            <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="" class="w-5 h-5">
                             <span class="text-xl font-bold text-emerald-500">54.00</span>
                         </div>
                     </div>
@@ -1067,7 +1067,7 @@
                         <!-- My Balance -->
                         <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-emerald-300 transition-all cursor-pointer">
                             <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src="./assets/icons/currency.svg" alt="Balance" class="w-full h-full object-contain">
+                                <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="Balance" class="w-full h-full object-contain">
                             </div>
                             <div class="flex-1">
                                 <h5 class="font-semibold text-gray-900 text-sm">My Balance</h5>
@@ -1080,7 +1080,7 @@
                         <!-- Pay In Store -->
                         <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-emerald-300 transition-all cursor-pointer">
                             <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                <img src="./assets/icons/cash-payment.svg" alt="Pay In Store" class="w-6 h-6">
+                                <img src="{{ asset('them2/assets/icons/cash-payment.svg') }}" alt="Pay In Store" class="w-6 h-6">
                             </div>
                             <div class="flex-1">
                                 <h5 class="font-semibold text-gray-900 text-sm">Pay In Store</h5>
@@ -1091,7 +1091,7 @@
                         <!-- Bank Transfer -->
                         <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-emerald-300 transition-all cursor-pointer">
                             <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src="./assets/icons/banktransfer.svg" alt="Bank Transfer" class="w-full h-full object-contain">
+                                <img src="{{ asset('them2/assets/icons/banktransfer.svg') }}" alt="Bank Transfer" class="w-full h-full object-contain">
                             </div>
                             <div class="flex-1">
                                 <h5 class="font-semibold text-gray-900 text-sm">Bank Transfer</h5>
@@ -1129,7 +1129,7 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-xl overflow-hidden">
-                        <img src="./assets/img/logo.svg" alt="Logo" class="w-full h-full object-contain">
+                        <img src="{{ asset('them2/assets/img/logo.svg') }}" alt="Logo" class="w-full h-full object-contain">
                     </div>
                     <span class="text-sm dark:text-gray-400 text-gray-600">2024 YekBun. All rights reserved.</span>
                 </div>
@@ -1158,7 +1158,7 @@
                 </p>
                 <div class="bg-emerald-50 rounded-2xl p-4 mb-6 border border-emerald-100">
                     <div class="flex items-center justify-center gap-2">
-                        <img src="./assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                        <img src="{{ asset('them2/assets/icons/currency.svg') }}" alt="Zer" class="w-8 h-8">
                         <span class="text-gray-700">Buy <span class="font-bold text-emerald-600">Zer Packs</span> to get started</span>
                     </div>
                 </div>
@@ -1229,7 +1229,7 @@
             <p class="text-gray-700 font-medium mb-4">Your Package is Activated now</p>
             <div class="bg-gradient-to-b from-gray-100 to-gray-200 rounded-3xl p-4 mb-4 mx-auto max-w-[180px]">
                 <div class="bg-white rounded-2xl p-3 shadow-inner">
-                    <img src="./assets/img/logo.svg" alt="YekBun" class="w-12 h-12 mx-auto mb-2">
+                    <img src="{{ asset('them2/assets/img/logo.svg') }}" alt="YekBun" class="w-12 h-12 mx-auto mb-2">
                     <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center mx-auto">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
@@ -1603,7 +1603,7 @@
 
         function logoutNow() {
             clearInterval(logoutCountdownInterval);
-            window.location.href = 'logout.html';
+            window.location.href = "{{ route('home') }}";
         }
 
         ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
