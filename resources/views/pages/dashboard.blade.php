@@ -1,3375 +1,1631 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - Lumen</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Genos:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - YekBun</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0a0a0f',
+                            800: '#12121a',
+                            700: '#1a1a25',
+                            600: '#252533',
+                            500: '#32324a',
+                        },
+                        accent: {
+                            primary: '#6366f1',
+                            secondary: '#8b5cf6',
+                            gold: '#fbbf24',
+                            emerald: '#10b981',
+                            cyan: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-      * {
-        font-family: "Genos", sans-serif;
-      }
-
-      :root {
-        --card-bg: #ffffff;
-      }
-
-      /* 
-       * Outer Gray Background Shape CSS
-       * This creates the gray rounded panel with notch effect on top-right corner
-       */
-
-      /* Main container - creates the gray background shape */
-      .outer-gray-container {
-        border-radius: 12.27px;
-        position: relative;
-        display: inline-block;
-      }
-
-      /* Gray background shape using ::before pseudo-element */
-      .outer-gray-container::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        --r: 17px;
-        --s: 17px;
-        border-radius: var(--r);
-        --_m: /calc(2 * var(--r)) calc(2 * var(--r)) radial-gradient(
-            #000 70%,
-            #0000 72%
-          ) no-repeat;
-        mask: right calc(var(--s) + var(--r)) top 0 var(--_m),
-          right calc(var(--s) + var(--r)) var(--_m),
-          radial-gradient(var(--s) at 100% 0, #0000 99%, #000 calc(100% + 1px))
-            calc(-1 * var(--r)) var(--r) no-repeat,
-          conic-gradient(
-            at calc(100% - var(--s) - 2 * var(--r))
-              calc(var(--s) + 2 * var(--r)),
-            #0000 25%,
-            #000 0
-          );
-        background-color: #ffffff;
-        z-index: 0;
-      }
-
-      /* Ensure all direct children are above the background */
-      .outer-gray-container > * {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Custom card content */
-      .custom-card {
-        background: transparent;
-        box-sizing: border-box;
-        position: relative;
-      }
-
-      /* 3. Medal Positioning */
-      /* This ensures the medal always stays in the top-right notch 
-         regardless of the card's width/height. */
-      .medal-overlay {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        z-index: 20;
-        pointer-events: none;
-      }
-
-      /* 4. Layout Container for the Sidebar */
-      .sidebar-stack {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5rem; /* Space between each card */
-        width: 100%;
-        padding: 1rem;
-      }
-
-      /* 5. Background Image Helper */
-      /* Use this if your cards have decorative background SVGs like Subtract.svg */
-      .bg-shape-img {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-      }
-
-      /* Pricing Toggle Cards */
-      .pricing-toggle-card {
-        transition: all 0.3s ease;
-      }
-
-      .pricing-toggle-card.active {
-        background-color: #ffffff;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-          0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      }
-
-      .pricing-toggle-card:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1),
-          0 4px 6px -1px rgba(0, 0, 0, 0.06);
-      }
-
-      /* Dashboard Plan Toggle Animation */
-      .dashboard-toggle-wrapper {
-        position: relative;
-        display: inline-flex;
-        background: #f3f4f6;
-        border-radius: 12px;
-        padding: 4px;
-        overflow: hidden;
-      }
-
-      .dashboard-toggle-wrapper .dashboard-toggle-option {
-        position: relative;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        padding: 8px 12px;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background: transparent;
-        border: none;
-        outline: none;
-      }
-
-      .dashboard-toggle-wrapper .dashboard-toggle-option.active {
-        background: white;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .dashboard-toggle-wrapper .dashboard-toggle-slider {
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        height: calc(100% - 8px);
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-          width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1;
-      }
-
-      /* Playlist Toggle Animation */
-      .playlist-toggle-wrapper {
-        position: relative;
-        display: inline-flex;
-        background: #22c55e;
-        border-radius: 9999px;
-        padding: 2px;
-        overflow: hidden;
-        height: 24px;
-      }
-
-      .playlist-toggle-wrapper .toggle-option {
-        position: relative;
-        z-index: 2;
-        padding: 2px 6px;
-        font-size: 10px;
-        font-weight: 500;
-        border-radius: 9999px;
-        cursor: pointer;
-        transition: color 0.3s ease;
-        background: transparent;
-        border: none;
-        outline: none;
-        display: flex;
-        align-items: center;
-      }
-
-      .playlist-toggle-wrapper .toggle-option.active {
-        color: #374151;
-      }
-
-      .playlist-toggle-wrapper .toggle-option:not(.active) {
-        color: white;
-      }
-
-      .playlist-toggle-wrapper .toggle-slider {
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        height: calc(100% - 4px);
-        width: 50px;
-        background: white;
-        border-radius: 9999px;
-        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-          width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1;
-      }
-
-      /* Responsive adjustments */
-      @media (min-width: 1024px) {
-        .playlist-toggle-wrapper {
-          padding: 2px;
-          height: 20px;
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        html.dark body {
+            background: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #1a1a25 100%);
         }
-        .playlist-toggle-wrapper .toggle-option {
-          padding: 1px 4px;
-          font-size: 8px;
+        html:not(.dark) body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
         }
-        .playlist-toggle-wrapper .toggle-slider {
-          top: 2px;
-          height: calc(100% - 4px);
-          width: 38px;
+        .dark .glass-card {
+            background: rgba(26, 26, 37, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-      }
-
-      @media (min-width: 1280px) {
-        .playlist-toggle-wrapper {
-          padding: 2px;
-          height: 22px;
+        html:not(.dark) .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .playlist-toggle-wrapper .toggle-option {
-          padding: 2px 5px;
-          font-size: 9px;
+        .dark .glass-card-light {
+            background: rgba(50, 50, 74, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .playlist-toggle-wrapper .toggle-slider {
-          top: 2px;
-          height: calc(100% - 4px);
-          width: 44px;
+        html:not(.dark) .glass-card-light {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-      }
-
-      @media (min-width: 1536px) {
-        .playlist-toggle-wrapper {
-          padding: 2px;
-          height: 26px;
+        .recommended-glow {
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.15), 0 0 80px rgba(139, 92, 246, 0.1);
         }
-        .playlist-toggle-wrapper .toggle-option {
-          padding: 2px 8px;
-          font-size: 10px;
+        .btn-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         }
-        .playlist-toggle-wrapper .toggle-slider {
-          top: 2px;
-          height: calc(100% - 4px);
-          width: 52px;
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #5558e3 0%, #7c4ee8 100%);
         }
-      }
-
-      /* Header scroll effect - rounded with gaps */
-      header {
-        transition: all 0.3s ease-in-out;
-        border-radius: 0;
-        left: 0;
-        right: 0;
-      }
-
-      header.scrolled {
-        left: 1rem;
-        right: 1rem;
-        top: 0.5rem;
-        border-radius: 9999px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-          0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      }
-
-      @media (max-width: 768px) {
-        header.scrolled {
-          left: 0.75rem;
-          right: 0.75rem;
+        .btn-cyan {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
         }
-      }
-
-      /* Custom scrollbar styles */
-      .scrollbar-thin::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      .scrollbar-thin::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      .scrollbar-thin::-webkit-scrollbar-thumb {
-        background: #d1d5db;
-        border-radius: 3px;
-      }
-
-      .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-        background: #9ca3af;
-      }
-
-      /* Hide scrollbar for Firefox */
-      .scrollbar-thin {
-        scrollbar-width: thin;
-        scrollbar-color: #d1d5db transparent;
-      }
-
+        .btn-cyan:hover {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+        }
+        .cashback-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .package-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(245,245,245,1) 100%);
+        }
+        .shop-card {
+            background: rgba(255, 255, 255, 0.98);
+        }
+        .theme-toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .dark .theme-toggle {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        html:not(.dark) .theme-toggle {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+        .theme-toggle-circle {
+            position: absolute;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dark .theme-toggle-circle {
+            left: 26px;
+        }
+        html:not(.dark) .theme-toggle-circle {
+            left: 2px;
+        }
     </style>
-    <svg width="0" height="0" style="position: absolute">
-      <defs>
-        <clipPath id="card-shape" clipPathUnits="objectBoundingBox">
-          <path
-            d="M 0,0.1 
-                   C 0,0.03 0.03,0 0.1,0 
-                   L 0.6,0 
-                   C 0.68,0 0.72,0.02 0.75,0.08 
-                   A 0.25,0.25 0 0 0 0.92,0.25 
-                   C 0.98,0.28 1,0.32 1,0.4 
-                   L 1,0.9 
-                   C 1,0.97 0.97,1 0.9,1 
-                   L 0.1,1 
-                   C 0.03,1 0,0.97 0,0.9 
-                   Z"
-          />
-        </clipPath>
-        <clipPath id="folder-clip" clipPathUnits="objectBoundingBox">
-          <path
-            d="M 0.1,0 
-                   L 0.7,0 
-                   C 0.74,0, 0.75,0.02, 0.75,0.1 
-                   L 0.75,0.18 
-                   C 0.75,0.26, 0.76,0.28, 0.82,0.28 
-                   L 0.92,0.28 
-                   C 0.98,0.28, 1,0.3, 1,0.38 
-                   L 1,0.9 
-                   C 1,0.98, 0.98,1, 0.92,1 
-                   L 0.08,1 
-                   C 0.02,1, 0,0.98, 0,0.9 
-                   L 0,0.1 
-                   C 0,0.02, 0.02,0, 0.08,0 
-                   Z"
-          />
-        </clipPath>
-        <clipPath
-          id="fixed-top-rounded-bottom"
-          clipPathUnits="objectBoundingBox"
-        >
-          <path
-            d="M 0.1,0 
-                   L 0.65,0 
-                   C 0.72,0, 0.75,0.02, 0.75,0.08 
-                   L 0.75,0.1 
-                   C 0.75,0.18, 0.78,0.22, 0.85,0.22 
-                   L 0.92,0.22 
-                   C 0.98,0.22, 1,0.25, 1,0.32 
-                   L 1,0.9 
-                   C 1,0.96, 0.96,1, 0.9,1 
-                   L 0.1,1 
-                   C 0.04,1, 0,0.96, 0,0.9 
-                   L 0,0.1 
-                   C 0,0.04, 0.04,0, 0.1,0 Z"
-          />
-        </clipPath>
-      </defs>
-    </svg>
-  </head>
-  <body style="font-family: 'Genos', sans-serif;background-color: #f2f2f2; ">
+</head>
+<body class="min-h-screen dark:text-white text-gray-900 font-sans transition-colors duration-300">
     <!-- Header -->
-    <header
-      class="fixed  top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 shadow-sm transition-all duration-300 ease-in-out"
-    >
-      <nav
-        class="max-w-[95%] mx-auto px-4 py-4 flex items-center justify-between"
-      >
-        <!-- Left Side: Logo -->
-        <div class="flex items-center gap-2 group cursor-pointer">
-          <a href="{{ route('home') }}">
-            <img src="{{ asset('assets/images/logo.svg') }}" alt="Lumen" class="w-10 h-10" />
-          </a>
+    <header class="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl overflow-hidden">
+                        <img src="./assets/img/logo.svg" alt="Logo" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-6">
+                    <div class="relative" id="langDropdownContainer">
+                        <button id="langDropdownBtn" class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
+                            <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">EN</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="langDropdown" class="hidden absolute right-0 top-full mt-2 w-32 bg-white dark:bg-dark-700 rounded-xl shadow-xl border dark:border-white/10 border-gray-200 py-1 z-50">
+                            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5">English</button>
+                            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5">Deutsch</button>
+                            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5">Kurdî</button>
+                        </div>
+                    </div>
+                    <button onclick="toggleMobileCart()" class="relative flex items-center gap-2 lg:hidden">
+                        <div class="relative">
+                            <svg class="w-6 h-6 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <span class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center font-bold">4</span>
+                        </div>
+                    </button>
+                    <div class="relative hidden lg:flex items-center gap-2">
+                        <div class="relative">
+                            <svg class="w-6 h-6 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <span class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center font-bold">4</span>
+                        </div>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">Enterprise Plan</span>
+                    </div>
+                    <button onclick="openModal('billingModal')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
+                        <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">Billing</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">John Doe</span>
+                        <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-sm font-semibold">JD</div>
+                    </div>
+                    <a href="logout.html" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-full transition-all">
+                        Logout
+                    </a>
+                </div>
+            </div>
         </div>
-
-        <!-- Right Side: Navigation Links in Light Grey Pill Container -->
-        <div
-          class="hidden md:flex items-center gap-0 bg-gray-100 rounded-full px-2 overflow-visible"
-        >
-          <!-- Language Selector -->
-          <div class="relative">
-            <button
-              id="language-btn"
-              class="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 px-4 py-2 rounded-full"
-            >
-              <i class="fas fa-globe text-sm"></i>
-              <span class="text-sm font-medium" id="current-lang">EN</span>
-              <i class="fas fa-chevron-down text-xs"></i>
-            </button>
-
-            <!-- Language Dropdown -->
-            <div
-              id="language-dropdown"
-              class="hidden absolute right-0  w-40 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
-            >
-              <a
-                href="#"
-                class="language-option block px-4 py-2 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-                data-lang="EN"
-              >
-                <div class="flex items-center justify-between">
-                  <span>English</span>
-                  <i
-                    class="fas fa-check text-blue-600 hidden"
-                    data-check="EN"
-                  ></i>
-                </div>
-              </a>
-              <a
-                href="#"
-                class="language-option block px-4 py-2 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-                data-lang="DE"
-              >
-                <div class="flex items-center justify-between">
-                  <span>Deutsch</span>
-                  <i
-                    class="fas fa-check text-blue-600 hidden"
-                    data-check="DE"
-                  ></i>
-                </div>
-              </a>
-              <a
-                href="#"
-                class="language-option block px-4 py-2 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-                data-lang="FR"
-              >
-                <div class="flex items-center justify-between">
-                  <span>Français</span>
-                  <i
-                    class="fas fa-check text-blue-600 hidden"
-                    data-check="FR"
-                  ></i>
-                </div>
-              </a>
-              <a
-                href="#"
-                class="language-option block px-4 py-2 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-                data-lang="ES"
-              >
-                <div class="flex items-center justify-between">
-                  <span>Español</span>
-                  <i
-                    class="fas fa-check text-blue-600 hidden"
-                    data-check="ES"
-                  ></i>
-                </div>
-              </a>
-            </div>
-          </div>
-          <!-- Vertical Separator -->
-          <div class="w-px bg-gray-300 mx-1"></div>
-          <!-- Cart Button -->
-          <button
-            onclick="showCart()"
-            class="relative flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 px-3 py-2 rounded-full overflow-visible"
-          >
-            <i class="fas fa-shopping-cart text-sm"></i>
-            <span class="text-sm font-medium">Cart</span>
-            <span
-              id="header-cart-count"
-              class="absolute top-1 -right-[2px] bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center"
-              >0</span
-            >
-          </button>
-          <!-- Vertical Separator -->
-          <div class="w-px h-6 bg-gray-300 mx-1"></div>
-          <!-- User Info -->
-          <div class="flex items-center gap-2 px-3 py-1">
-            <div class="text-right hidden lg:block">
-              <div class="text-sm font-semibold text-gray-900" id="user-name">
-                John Doe
-              </div>
-              <div class="text-xs text-gray-600" id="account-type">
-                Free Plan
-              </div>
-            </div>
-            <div
-              class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-xs"
-              id="user-avatar"
-            >
-              JD
-            </div>
-          </div>
-          <!-- Vertical Separator -->
-          <div class="w-px h-6 bg-gray-300 mx-1"></div>
-          <!-- Logout Button -->
-          <button
-            id="logout-btn"
-            class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white text-sm font-bold px-6 py-2 rounded-full transition-all duration-300 hover:scale-105 flex items-center gap-2"
-          >
-            <i class="fas fa-sign-out-alt text-xs"></i>
-            <span>Logout</span>
-          </button>
-        </div>
-
-        <!-- Mobile Menu Button (Right Side) -->
-        <button
-          id="mobile-menu-btn"
-          class="block lg:hidden text-gray-700 hover:text-blue-600 transition-colors"
-        >
-          <i class="fas fa-bars text-xl"></i>
-        </button>
-      </nav>
-
-      <!-- Mobile Menu -->
-      <div
-        id="mobile-menu"
-        class="hidden md:hidden bg-white border-t border-gray-200"
-      >
-        <div class="max-w-7xl mx-auto px-6 py-4 space-y-4">
-          <div class="pt-2 border-t border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold"
-                  id="mobile-user-avatar"
-                >
-                  JD
-                </div>
-                <div>
-                  <div
-                    class="text-sm font-semibold text-white"
-                    id="mobile-user-name"
-                  >
-                    John Doe
-                  </div>
-                  <div class="text-xs text-gray-600" id="mobile-account-type">
-                    Free Plan
-                  </div>
-                </div>
-              </div>
-            </div>
-            <button
-              id="mobile-logout-btn"
-              class="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white text-sm font-bold px-6 py-2 rounded-full transition-all duration-300 text-center"
-            >
-              <i class="fas fa-sign-out-alt mr-2"></i>Logout
-            </button>
-          </div>
-          <div class="pt-2 border-t border-gray-200">
-            <button
-              id="mobile-language-btn"
-              class="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 py-2"
-            >
-              <i class="fas fa-globe text-sm"></i>
-              <span class="text-sm font-medium" id="mobile-current-lang"
-                >EN</span
-              >
-            </button>
-          </div>
-        </div>
-      </div>
     </header>
 
-    <!-- Dashboard Content -->
-    <!-- Sidebar Overlay for Medium Devices -->
-    <div
-      id="sidebar-overlay"
-      class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-    ></div>
-
-    <!-- Medium Device Sidebar (Overlay from Right) -->
-    <div
-      id="sidebar-md"
-      class="block lg:hidden fixed right-0 top-0 h-full z-50 w-80 transform translate-x-full transition-transform duration-300 ease-in-out space-y-2 bg-gray-100 rounded-2xl overflow-y-auto p-4"
-    >
-      <!-- Close Button for Medium Devices -->
-      <button
-        id="sidebar-close"
-        class="absolute top-4 right-4 text-gray-700 hover:text-gray-900 z-10"
-      >
-        <i class="fas fa-times text-xl"></i>
-      </button>
-
-      <!-- Navbar Buttons for Small Devices Only -->
-      <div class="md:hidden flex flex-col gap-3 mb-6 pt-8">
-        <!-- Language Selector -->
-        <div class="relative">
-          <button
-            id="sidebar-language-btn"
-            class="w-full flex items-center justify-between gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 px-4 py-2 rounded-full bg-white border border-gray-200"
-          >
-            <div class="flex items-center gap-2">
-              <i class="fas fa-globe text-sm"></i>
-              <span class="text-sm font-medium" id="sidebar-current-lang"
-                >EN</span
-              >
-            </div>
-            <i class="fas fa-chevron-down text-xs"></i>
-          </button>
-
-          <!-- Language Dropdown -->
-          <div
-            id="sidebar-language-dropdown"
-            class="hidden absolute left-0 right-0 mt-2 w-full bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
-          >
-            <a
-              href="#"
-              class="sidebar-language-option block px-4 py-3 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-              data-lang="EN"
-            >
-              <div class="flex items-center justify-between">
-                <span>English</span>
-                <i
-                  class="fas fa-check text-blue-600 hidden"
-                  data-check="EN"
-                ></i>
-              </div>
-            </a>
-            <a
-              href="#"
-              class="sidebar-language-option block px-4 py-3 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-              data-lang="DE"
-            >
-              <div class="flex items-center justify-between">
-                <span>Deutsch</span>
-                <i
-                  class="fas fa-check text-blue-600 hidden"
-                  data-check="DE"
-                ></i>
-              </div>
-            </a>
-            <a
-              href="#"
-              class="sidebar-language-option block px-4 py-3 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-              data-lang="FR"
-            >
-              <div class="flex items-center justify-between">
-                <span>Français</span>
-                <i
-                  class="fas fa-check text-blue-600 hidden"
-                  data-check="FR"
-                ></i>
-              </div>
-            </a>
-            <a
-              href="#"
-              class="sidebar-language-option block px-4 py-3 hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-              data-lang="ES"
-            >
-              <div class="flex items-center justify-between">
-                <span>Español</span>
-                <i
-                  class="fas fa-check text-blue-600 hidden"
-                  data-check="ES"
-                ></i>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- Cart Button -->
-        <button
-          onclick="showCart()"
-          class="relative w-full flex items-center justify-between gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 px-4 py-2 rounded-full bg-white border border-gray-200 overflow-visible"
-        >
-          <div class="flex items-center gap-2">
-            <i class="fas fa-shopping-cart text-sm"></i>
-            <span class="text-sm font-medium">Cart</span>
-          </div>
-          <span
-            id="sidebar-cart-count"
-            class="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-            >0</span
-          >
-        </button>
-
-        <!-- User Info -->
-        <div
-          class="flex items-center justify-between gap-3 px-4 py-2 bg-white border border-gray-200 rounded-full"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-xs"
-              id="sidebar-user-avatar"
-            >
-              JD
-            </div>
-            <div class="text-left">
-              <div
-                class="text-sm font-semibold text-gray-900"
-                id="sidebar-user-name"
-              >
-                John Doe
-              </div>
-              <div class="text-xs text-gray-600" id="sidebar-account-type">
-                Free Plan
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Logout Button -->
-        <button
-          id="sidebar-logout-btn"
-          class="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white text-sm font-bold px-6 py-2 rounded-full transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
-        >
-          <i class="fas fa-sign-out-alt text-xs"></i>
-          <span>Logout</span>
-        </button>
-      </div>
-
-      <!-- Profile Header -->
-      <div class="relative top-2 left-2 items-start justify-between">
-        <img src="{{ asset('assets/images/medal.svg') }}" alt="Medal" class="w-9 h-11" />
-      </div>
-      <div class="bg-gray-100 rounded-2xl">
-        <div class="relative flex justify-center mb-4">
-          <div class="relative">
-            <img
-              src="https://i.pravatar.cc/150?img=12"
-              alt="Profile"
-              class="lg:w-[149px] lg:h-[149px] xl:w-[249px] xl:h-[249px] rounded-full object-cover"
-            />
-          </div>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">
-          Username
-        </h2>
-        <div class="flex items-center justify-center gap-2 text-gray-600">
-          <i class="fas fa-flag text-sm"></i>
-          <span class="text-base">Hurban</span>
-        </div>
-      </div>
-
-      <!-- Subscriptions -->
-      <div class="bg-gray-100 rounded-2xl w-full overflow-hidden">
-        <div class="space-y-1 -mt-16 w-full">
-          <!-- EDUCATED Card -->
-          <div class="my-auto">
-            <div
-              class="outer-gray-container lg:w-full lg:h-[14vh] xl:h-[16vh] lg:min-w-[184px] lg:min-h-[128px] xl:min-w-[204px] xl:min-h-[144px] mt-20 flex justify-center mx-auto"
-            >
-              <div class="custom-card w-full h-full">
-                <div class="flex items-center justify-between">
-                  <h3
-                    class="text-base font-medium lg:text-xs xl:text-sm mb-2 px-2"
-                    style="color: #6b7280"
-                  >
-                    Subscribtions
-                  </h3>
-                  <img
-                    src="{{ asset('assets/images/medal.svg') }}"
-                    alt="Playlist Icon"
-                    class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                  />
-                </div>
-                <h4
-                  class="text-2xl font-bold mb-1 lg:text-sm xl:text-[20px] mb-2 px-2"
-                  style="color: #1f2937"
-                >
-                  EDUCATED
-                </h4>
-                <div
-                  class="flex flex-wrap gap-2 lg:gap-2 mb-1 justify-between px-2"
-                >
-                  <span
-                    class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                    >monthly</span
-                  >
-                  <span
-                    class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                    >Renew 25.01.2026</span
-                  >
-                </div>
-                <div
-                  class="flex flex-row items-stretch mb-1 gap-5 rounded-b-full lg:gap-0.5 px-1 pt-2"
-                >
-                  <div
-                    class="px-3 py-2 bg-green-100 flex flex-col items-center justify-center gap-2 rounded-md rounded-bl-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                  >
-                    <div class="flex flex-row items-center lg:gap-0.5 xl:gap-1">
-                      <img
-                        src="{{ asset('assets/images/currency.svg') }}"
-                        alt="Currency"
-                        class="w-5 h-5 lg:w-3 lg:h-3 xl:w-4 xl:h-4"
-                      />
-                      <span
-                        class="text-lg font-bold lg:text-xs xl:text-sm"
-                        style="color: #1f2937"
-                        >500.00</span
-                      >
-                    </div>
-                    <p
-                      class="text-[12px] font-medium lg:text-[8px] xl:text-[10px]"
-                      style="color: #15803d"
-                    >
-                      5% CASHBACK
-                    </p>
-                  </div>
-                  <div
-                    style="background-color: #fee2e2"
-                    class="flex flex-col items-center justify-center gap-2 px-3 py-2 rounded-md rounded-br-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                  >
-                    <span
-                      class="text-xs font-medium lg:text-[8px] xl:text-[10px]"
-                      style="color: #dc2626"
-                      >Deactivated</span
-                    >
-                    <label
-                      class="relative inline-flex items-center cursor-pointer"
-                    >
-                      <input type="checkbox" class="sr-only peer" />
-                      <div
-                        class="w-11 h-6 bg-red-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500 lg:w-7 lg:h-4 lg:after:h-3 lg:after:w-3 xl:w-9 xl:h-5 xl:after:h-4 xl:after:w-4"
-                      ></div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- ACADEMIC Card -->
-            <div
-              class="outer-gray-container lg:w-full lg:h-[14vh] xl:h-[16vh] lg:min-w-[184px] lg:min-h-[124px] xl:min-w-[214px] xl:min-h-[144px] mt-2 flex justify-center mx-auto"
-            >
-              <div class="custom-card w-full h-full">
-                <div class="flex items-center justify-between">
-                  <h3
-                    class="text-base font-medium lg:text-xs xl:text-sm mb-2 px-2"
-                    style="color: #6b7280"
-                  >
-                    Subscribtions
-                  </h3>
-                  <img
-                    src="{{ asset('assets/images/medal.svg') }}"
-                    alt="Playlist Icon"
-                    class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                  />
-                </div>
-                <h4
-                  class="text-2xl font-bold mb-1 lg:text-sm xl:text-base mb-2 px-2"
-                  style="color: #1f2937"
-                >
-                  ACADEMIC
-                </h4>
-                <div
-                  class="flex flex-wrap gap-2 mb-1 lg:gap-1 mb-2 justify-between px-2"
-                >
-                  <span
-                    class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                    >yearly</span
-                  >
-                  <span
-                    class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                    >Renew 25.01.2026</span
-                  >
-                </div>
-                <div
-                  class="flex flex-row items-stretch mb-1 gap-1 rounded-b-full lg:gap-0.5 px-1"
-                >
-                  <div
-                    class="px-3 py-2 bg-green-100 flex flex-col items-center justify-center gap-2 rounded-md rounded-bl-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                  >
-                    <div class="flex flex-row items-center lg:gap-0.5 xl:gap-1">
-                      <img
-                        src="{{ asset('assets/images/currency.svg') }}"
-                        alt="Currency"
-                        class="w-5 h-5 lg:w-3 lg:h-3 xl:w-4 xl:h-4"
-                      />
-                      <span
-                        class="text-lg font-bold lg:text-xs xl:text-sm"
-                        style="color: #1f2937"
-                        >5000.00</span
-                      >
-                    </div>
-                    <p
-                      class="text-[12px] font-medium lg:text-[8px] xl:text-[10px]"
-                      style="color: #15803d"
-                    >
-                      5% CASHBACK
-                    </p>
-                  </div>
-                  <div
-                    class="bg-green-100 flex flex-col items-center justify-center gap-2 px-3 py-2 rounded-md rounded-br-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                  >
-                    <span
-                      class="text-xs font-medium lg:text-[8px] xl:text-[10px]"
-                      style="color: #15803d"
-                      >Activate It</span
-                    >
-                    <label
-                      class="relative inline-flex items-center cursor-pointer"
-                    >
-                      <input type="checkbox" class="sr-only peer" />
-                      <div
-                        class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 lg:w-7 lg:h-4 lg:after:h-3 lg:after:w-3 xl:w-9 xl:h-5 xl:after:h-4 xl:after:w-4"
-                      ></div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- CULTIVATED Card -->
-            <div
-              class="outer-gray-container lg:w-full lg:h-[8vh] xl:h-[9vh] lg:min-w-[184px] lg:min-h-[70px] xl:min-w-[214px] xl:min-h-[79px] mt-2 flex justify-center mx-auto"
-            >
-              <div class="custom-card w-full h-full px-2">
-                <div class="flex items-center justify-between">
-                  <h3
-                    class="text-base font-medium lg:text-xs xl:text-sm mb-2"
-                    style="color: #6b7280"
-                  >
-                    Subscribtions
-                  </h3>
-                  <img
-                    src="{{ asset('assets/images/freemedal.svg') }}"
-                    alt="Playlist Icon"
-                    class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                  />
-                </div>
-                <h4
-                  class="text-2xl font-bold mb-1 lg:text-sm xl:text-base mb-1"
-                  style="color: #1f2937"
-                >
-                  CULTIVATED
-                </h4>
-                <div class="flex justify-center mb-2 px-2">
-                  <span
-                    class="px-4 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:py-0.5 xl:text-[10px]"
-                    >Free</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- My QR-Code -->
-        <div class="p-3">
-          <div
-            class="outer-gray-container lg:w-full lg:h-[22vh] xl:h-[28vh] lg:min-w-[194px] lg:min-h-[204px] xl:min-w-[224px] xl:min-h-[264px] lg:px-[18px] xl:px-[20px] mt-2 mx-auto"
-          >
-            <div class="custom-card w-[270px] h-full px-2 lg:p-3 flex flex-col">
-              <h3
-                class="text-base font-medium lg:text-lg lg:font-bold text-gray-400 mb-2"
-              >
-                My QR-Code
-              </h3>
-              <img
-                src="{{ asset('assets/images/qr.svg') }}"
-                alt="QR Code"
-                class="w-full object-contain lg:h-[14vh] xl:h-[18vh] lg:min-h-[130px] xl:min-h-[180px]"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- My Balance & My Cashback -->
-        <div class="grid grid-cols-1 gap-4">
-          <!-- My Balance -->
-          <div
-            class="outer-gray-container lg:w-full lg:h-[9vh] xl:h-[11vh] lg:min-w-[184px] lg:min-h-[84px] xl:min-w-[214px] xl:min-h-[99px] mx-auto"
-          >
-            <div
-              class="custom-card w-[270px] h-full px-2 lg:py-1 flex flex-col"
-            >
-              <div class="flex items-center justify-between mb-2">
-                <h3
-                  class="text-base font-medium lg:text-xs xl:text-sm text-gray-400"
-                >
-                  My Balance
-                </h3>
-                <img
-                  src="{{ asset('assets/images/wallet.svg') }}"
-                  alt="Wallet"
-                  class="w-6 h-6 lg:w-5 lg:h-5 xl:w-6 xl:h-6"
-                />
-              </div>
-              <div class="flex flex-col items-center">
-                <img
-                  src="{{ asset('assets/images/currency.svg') }}"
-                  alt="Currency"
-                  class="w-10 h-10 lg:w-6 lg:h-6 xl:w-8 xl:h-8 mb-1"
-                  style="
-                    filter: brightness(0) saturate(100%) invert(77%) sepia(95%)
-                      saturate(1352%) hue-rotate(5deg) brightness(102%)
-                      contrast(101%);
-                  "
-                />
-                <span
-                  class="text-2xl font-bold lg:text-base xl:text-xl"
-                  style="color: #1f2937"
-                  >999.999.00</span
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- My Cashback -->
-          <div
-            class="outer-gray-container lg:w-full lg:h-[9vh] xl:h-[11vh] lg:min-w-[184px] lg:min-h-[84px] xl:min-w-[214px] xl:min-h-[99px] mt-2 mx-auto"
-          >
-            <div
-              class="custom-card w-[270px] h-full px-2 lg:py-1 flex flex-col"
-            >
-              <div class="flex items-center justify-between mb-2">
-                <h3
-                  class="text-base font-medium lg:text-xs xl:text-sm text-gray-400"
-                >
-                  My Cashback
-                </h3>
-                <img
-                  src="{{ asset('assets/images/coin.svg') }}"
-                  alt="Coin"
-                  class="w-6 h-6 lg:w-5 lg:h-5 xl:w-6 xl:h-6"
-                />
-              </div>
-              <div class="flex flex-col items-center">
-                <img
-                  src="{{ asset('assets/images/currency.svg') }}"
-                  alt="Currency"
-                  class="w-10 h-10 lg:w-6 lg:h-6 xl:w-8 xl:h-8 mb-1"
-                  style="
-                    filter: brightness(0) saturate(100%) invert(77%) sepia(95%)
-                      saturate(1352%) hue-rotate(5deg) brightness(102%)
-                      contrast(101%);
-                  "
-                />
-                <span
-                  class="text-2xl font-bold lg:text-base xl:text-xl"
-                  style="color: #1f2937"
-                  >999.999.00</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- My Playlist -->
-        <div
-          class="outer-gray-container mx-auto lg:w-full lg:h-[42vh] xl:h-[48vh] lg:min-w-[194px] lg:min-h-[394px] xl:min-w-[224px] xl:min-h-[444px] mt-2"
-        >
-          <div class="custom-card w-full h-full flex flex-col">
-            <div
-              class="flex items-center justify-between mb-4 lg:mb-4 xl:mb-4 drop-shadow-xl"
-            >
-              <h3
-                class="text-lg font-bold lg:text-lg xl:text-lg pl-4"
-                style="color: #9ca3af"
-              >
-                My Playlist
-              </h3>
-              <img
-                src="{{ asset('assets/images/playlisticon.svg') }}"
-                alt="Playlist Icon"
-                class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-              />
-            </div>
-            <div
-              class="space-y-3 lg:space-y-1 xl:space-y-3 flex flex-col items-center"
-            >
-              <!-- Free List -->
-              <div
-                class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%]"
-              >
-                <div
-                  class="custom-card px-2 py-1 flex flex-col w-full lg:w-full lg:h-auto mx-auto"
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <h4
-                      class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                    >
-                      Free List
-                    </h4>
-                    <div
-                      class="w-6 h-6 lg:w-5 lg:h-5 bg-green-500 rounded-full flex items-center justify-center"
-                    >
-                      <img
-                        src="{{ asset('assets/images/check.svg') }}"
-                        alt="Playlist Icon"
-                        class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                      />
-                    </div>
-                  </div>
-                  <p
-                    class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 mb-2"
-                  >
-                    LIST TITLE
-                  </p>
-                  <div class="flex gap-2 lg:gap-1.5">
-                    <span
-                      class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                      >Free</span
-                    >
-                    <span
-                      class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                      >25 Song</span
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bronze List -->
-              <div
-                class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%] mx-auto"
-              >
-                <div
-                  class="custom-card px-2 py-1 flex flex-col w-full lg:w-full lg:h-auto"
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <h4
-                      class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                    >
-                      Bronze list
-                    </h4>
-                    <div
-                      class="w-6 h-6 lg:w-5 lg:h-5 bg-green-500 rounded-full flex items-center justify-center"
-                    >
-                      <img
-                        src="{{ asset('assets/images/check.svg') }}"
-                        alt="Playlist Icon"
-                        class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                      />
-                    </div>
-                  </div>
-                  <p
-                    class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 mb-2"
-                  >
-                    LIST TITLE
-                  </p>
-                  <div class="flex gap-2 lg:gap-1.5">
-                    <span
-                      class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                      >Monthly</span
-                    >
-                    <span
-                      class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                      >50 Song</span
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <!-- Silver List -->
-              <div
-                class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%] mx-auto"
-              >
-                <div
-                  class="custom-card px-2 py-1 flex flex-col w-full lg:w-full lg:h-auto"
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <h4
-                      class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                    >
-                      Silver list
-                    </h4>
-                    <img
-                      src="{{ asset('assets/images/carticon.svg') }}"
-                      alt="Shopping Cart"
-                      class="w-6 h-6 lg:w-5 lg:h-5"
-                    />
-                  </div>
-                  <p
-                    class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 mb-2"
-                  >
-                    NO TITLE
-                  </p>
-                  <div class="flex gap-2 lg:gap-1.5">
-                    <span
-                      class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-red-100 text-red-700 text-xs lg:text-[10px] rounded-xl"
-                      >Expired</span
-                    >
-                    <span
-                      class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                      >50 Song</span
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <!-- Gold List -->
-              <div
-                class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%] mx-auto"
-              >
-                <div
-                  class="custom-card px-2 py-1 flex flex-col w-full lg:w-full lg:h-auto"
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <h4
-                      class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                    >
-                      Gold list
-                    </h4>
-                    <div
-                      class="w-6 h-6 lg:w-5 lg:h-5 flex items-center justify-center relative"
-                    >
-                      <img
-                        src="{{ asset('assets/images/carticon.svg') }}"
-                        alt="Playlist Icon"
-                        class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                      />
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between mb-1.5">
-                    <p
-                      class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 text-nowrap"
-                    >
-                      NO TITLE
-                    </p>
-                    <span
-                      class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl text-nowrap"
-                      >100 Song</span
-                    >
-                  </div>
-                  <div class="flex gap-1 bg-green-500 rounded-lg w-fit mx-auto">
-                    <button
-                      class="flex-1 bg-green-500 text-white text-xs lg:text-[10px] font-medium rounded-md"
-                    >
-                      Monthly
-                    </button>
-                    <button
-                      class="flex-1 text-gray-700 text-xs lg:text-[10px] font-medium bg-white border border-green-500 rounded-md"
-                    >
-                      Yearly
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mx-auto pt-2 pt-20 bg-[#f2f2f2]">
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-3 xl:gap-4">
-        <!-- Large/XL Device Sidebar (Static) -->
-        <div
-          id="sidebar-lg"
-          class="hidden lg:block lg:col-span-1 space-y-2 border-2 border-white rounded-2xl mb-4 px-4 pb-6"
-        >
-          <!-- Profile Header -->
-          <div class="relative top-2 left-2 items-start justify-between">
-            <img src="{{ asset('assets/images/medal.svg') }}" alt="Medal" class="w-9 h-11" />
-          </div>
-          <div class="bg-gray-100 rounded-2xl">
-            <div class="relative flex justify-center mb-4">
-              <div class="relative">
-                <img
-                  src="https://i.pravatar.cc/150?img=12"
-                  alt="Profile"
-                  class="lg:w-[12vw] lg:h-[12vw] xl:w-[15vw] xl:h-[15vw] lg:min-w-[149px] lg:min-h-[149px] xl:min-w-[249px] xl:min-h-[249px] rounded-full object-cover"
-                />
-              </div>
-            </div>
-            <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">
-              Username
-            </h2>
-            <div class="flex items-center justify-center gap-2 text-gray-600">
-              <i class="fas fa-flag text-sm"></i>
-              <span class="text-base">Hurban</span>
-            </div>
-          </div>
-
-          <!-- Subscriptions -->
-          <div class="bg-gray-100 rounded-2xl w-full overflow-hidden">
-            <div class="space-y-1 -mt-16 w-full">
-              <!-- EDUCATED Card -->
-              <div class="my-auto">
-                <div
-                  class="outer-gray-container lg:w-full lg:h-[14vh] xl:h-[16vh] lg:min-w-[184px] lg:min-h-[128px] xl:min-w-[204px] xl:min-h-[144px] hidden lg:block mt-20 flex justify-center mx-auto"
-                >
-                  <div class="custom-card w-full h-full">
-                    <div class="flex items-center justify-between">
-                      <h3
-                        class="text-base font-medium lg:text-xs xl:text-sm mb-2 px-2"
-                        style="color: #6b7280"
-                      >
-                        Subscribtions
-                      </h3>
-                      <img
-                        src="{{ asset('assets/images/medal.svg') }}"
-                        alt="Playlist Icon"
-                        class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                      />
-                    </div>
-                    <h4
-                      class="text-2xl font-bold mb-1 lg:text-sm xl:text-[20px] mb-2 px-2"
-                      style="color: #1f2937"
-                    >
-                      EDUCATED
-                    </h4>
-                    <div
-                      class="flex flex-wrap gap-2 lg:gap-2 mb-1 justify-between px-2"
-                    >
-                      <span
-                        class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                        >monthly</span
-                      >
-                      <span
-                        class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                        >Renew 25.01.2026</span
-                      >
-                    </div>
-                    <div
-                      class="flex flex-row items-stretch mb-1 gap-5 rounded-b-full lg:gap-0.5 px-1 pt-2"
-                    >
-                      <div
-                        class="px-3 py-2 bg-green-100 flex flex-col items-center justify-center gap-2 rounded-md rounded-bl-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                      >
-                        <div
-                          class="flex flex-row items-center lg:gap-0.5 xl:gap-1"
-                        >
-                          <img
-                            src="{{ asset('assets/images/currency.svg') }}"
-                            alt="Currency"
-                            class="w-5 h-5 lg:w-3 lg:h-3 xl:w-4 xl:h-4"
-                          />
-                          <span
-                            class="text-lg font-bold lg:text-xs xl:text-sm"
-                            style="color: #1f2937"
-                            >500.00</span
-                          >
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- User Profile Card -->
+                <div class="glass-card rounded-3xl p-5 sm:p-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                        <div class="relative">
+                            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 overflow-hidden border-2 border-accent-primary/30 flex items-center justify-center text-2xl font-bold text-accent-primary">JD</div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-accent-emerald rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
                         </div>
-                        <p
-                          class="text-[12px] font-medium lg:text-[8px] xl:text-[10px]"
-                          style="color: #15803d"
-                        >
-                          5% CASHBACK
-                        </p>
-                      </div>
-                      <div
-                        style="background-color: #fee2e2"
-                        class="flex flex-col items-center justify-center gap-2 px-3 py-2 rounded-md rounded-br-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                      >
-                        <span
-                          class="text-xs font-medium lg:text-[8px] xl:text-[10px]"
-                          style="color: #dc2626"
-                          >Deactivated</span
-                        >
-                        <label
-                          class="relative inline-flex items-center cursor-pointer"
-                        >
-                          <input type="checkbox" class="sr-only peer" />
-                          <div
-                            class="w-11 h-6 bg-red-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500 lg:w-7 lg:h-4 lg:after:h-3 lg:after:w-3 xl:w-9 xl:h-5 xl:after:h-4 xl:after:w-4"
-                          ></div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- ACADEMIC Card -->
-                <div
-                  class="outer-gray-container lg:w-full lg:h-[14vh] xl:h-[16vh] lg:min-w-[184px] lg:min-h-[124px] xl:min-w-[214px] xl:min-h-[144px] hidden lg:block mt-2 flex justify-center mx-auto"
-                >
-                  <div class="custom-card w-full h-full">
-                    <div class="flex items-center justify-between">
-                      <h3
-                        class="text-base font-medium lg:text-xs xl:text-sm mb-2 px-2"
-                        style="color: #6b7280"
-                      >
-                        Subscribtions
-                      </h3>
-                      <img
-                        src="{{ asset('assets/images/medal.svg') }}"
-                        alt="Playlist Icon"
-                        class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                      />
-                    </div>
-                    <h4
-                      class="text-2xl font-bold mb-1 lg:text-sm xl:text-base mb-2 px-2"
-                      style="color: #1f2937"
-                    >
-                      ACADEMIC
-                    </h4>
-                    <div
-                      class="flex flex-wrap gap-2 mb-1 lg:gap-1 mb-2 justify-between px-2"
-                    >
-                      <span
-                        class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                        >yearly</span
-                      >
-                      <span
-                        class="px-2 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:px-1 lg:py-0.5 xl:text-[10px] xl:px-1.5 xl:py-0.5"
-                        >Renew 25.01.2026</span
-                      >
-                    </div>
-                    <div
-                      class="flex flex-row items-stretch mb-1 gap-1 rounded-b-full lg:gap-0.5 px-1"
-                    >
-                      <div
-                        class="px-3 py-2 bg-green-100 flex flex-col items-center justify-center gap-2 rounded-md rounded-bl-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                      >
-                        <div
-                          class="flex flex-row items-center lg:gap-0.5 xl:gap-1"
-                        >
-                          <img
-                            src="{{ asset('assets/images/currency.svg') }}"
-                            alt="Currency"
-                            class="w-5 h-5 lg:w-3 lg:h-3 xl:w-4 xl:h-4"
-                          />
-                          <span
-                            class="text-lg font-bold lg:text-xs xl:text-sm"
-                            style="color: #1f2937"
-                            >5000.00</span
-                          >
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h2 class="text-xl sm:text-2xl font-bold">Username</h2>
+                                <img src="./assets/img/educated-label.svg" alt="Educated" class="h-6">
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400 text-sm mb-3">
+                                <span>Kurdistan Rojava</span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-dark-600/50">
+                                    <span class="text-xs text-gray-400">Subscription</span>
+                                    <span class="text-sm font-medium text-accent-gold">Monthly</span>
+                                </div>
+                                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-dark-600/50">
+                                    <span class="text-xs text-gray-400">Renew</span>
+                                    <span class="text-sm font-medium">25.01.2026</span>
+                                </div>
+                                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-dark-600/50">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="subscribeToggle" class="sr-only peer" checked>
+                                        <div class="w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                    <span id="subscribeStatus" class="text-xs font-medium text-emerald-400">Subscribed</span>
+                                </div>
+                            </div>
                         </div>
-                        <p
-                          class="text-[12px] font-medium lg:text-[8px] xl:text-[10px]"
-                          style="color: #15803d"
-                        >
-                          5% CASHBACK
-                        </p>
-                      </div>
-                      <div
-                        class="bg-green-100 flex flex-col items-center justify-center gap-2 px-3 py-2 rounded-md rounded-br-xl lg:px-1.5 lg:py-1 lg:gap-0.5 xl:px-2 xl:py-1.5 xl:gap-1 flex-1"
-                      >
-                        <span
-                          class="text-xs font-medium lg:text-[8px] xl:text-[10px]"
-                          style="color: #15803d"
-                          >Activate It</span
-                        >
-                        <label
-                          class="relative inline-flex items-center cursor-pointer"
-                        >
-                          <input type="checkbox" class="sr-only peer" />
-                          <div
-                            class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 lg:w-7 lg:h-4 lg:after:h-3 lg:after:w-3 xl:w-9 xl:h-5 xl:after:h-4 xl:after:w-4"
-                          ></div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- CULTIVATED Card -->
-                <div
-                  class="outer-gray-container lg:w-full lg:h-[8vh] xl:h-[9vh] lg:min-w-[184px] lg:min-h-[70px] xl:min-w-[214px] xl:min-h-[79px] hidden lg:block mt-2 flex justify-center mx-auto"
-                >
-                  <div class="custom-card w-full h-full px-2">
-                    <div class="flex items-center justify-between">
-                      <h3
-                        class="text-base font-medium lg:text-xs xl:text-sm mb-2"
-                        style="color: #6b7280"
-                      >
-                        Subscribtions
-                      </h3>
-                      <img
-                        src="{{ asset('assets/images/freemedal.svg') }}"
-                        alt="Playlist Icon"
-                        class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                      />
-                    </div>
-                    <h4
-                      class="text-2xl font-bold mb-1 lg:text-sm xl:text-base mb-1"
-                      style="color: #1f2937"
-                    >
-                      CULTIVATED
-                    </h4>
-                    <div class="flex justify-center mb-2 px-2">
-                      <span
-                        class="px-4 py-1 bg-green-500 text-white text-xs rounded-xl lg:text-[8px] lg:py-0.5 xl:text-[10px]"
-                        >Free</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- My QR-Code -->
-            <div class="p-3">
-              <!-- Small screens: use background image -->
-              <div
-                class="mt-4 relative mx-auto rounded-2xl overflow-hidden bg-no-repeat bg-center bg-[url('{{ asset("assets/images/qrbg.svg") }}')] p-4 min-h-[200px] w-full max-w-[500px] bg-[length:320px] lg:hidden"
-              >
-                <h3 class="text-lg font-bold text-gray-400 mb-2">My QR-Code</h3>
-                <img
-                  src="{{ asset('assets/images/qr.svg') }}"
-                  alt="QR Code"
-                  class="w-full object-contain"
-                />
-              </div>
-              <!-- lg and xl screens: use clip-path with card wrapper -->
-              <div
-                class="outer-gray-container lg:w-full lg:h-[22vh] xl:h-[28vh] lg:min-w-[194px] lg:min-h-[204px] xl:min-w-[224px] xl:min-h-[264px] lg:px-[18px] xl:px-[20px] hidden lg:block mt-2 mx-auto"
-              >
-                <div
-                  class="custom-card w-full h-full lg:p-3 flex flex-col items-start"
-                >
-                  <h3 class="text-lg font-bold text-gray-400 mb-2">
-                    My QR-Code
-                  </h3>
-                  <img
-                    src="{{ asset('assets/images/qr.svg') }}"
-                    alt="QR Code"
-                    class="w-[200px] object-contain lg:h-[14vh] xl:h-[18vh] lg:min-h-[130px] xl:min-h-[180px] mt-5"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- My Balance & My Cashback -->
-            <div class="grid grid-cols-1 gap-4">
-              <!-- My Balance - Small screens -->
-              <div
-                class="rounded-2xl overflow-hidden bg-no-repeat bg-center bg-[url('{{ asset("assets/images/small.svg") }}')] w-full max-w-[320px] bg-[length:320px] p-3 lg:hidden"
-              >
-                <div class="flex items-start justify-between px-4 pt-3">
-                  <h3 class="text-base font-bold text-gray-400 text-nowrap">
-                    My Balance
-                  </h3>
-                  <img
-                    src="{{ asset('assets/images/wallet.svg') }}"
-                    alt="Wallet"
-                    class="w-8 h-8"
-                    style="margin-top: -10px; margin-left: 120px"
-                  />
-                </div>
-                <div class="flex flex-col px-4">
-                  <img
-                    src="{{ asset('assets/images/currency.svg') }}"
-                    alt="Currency"
-                    class="w-10 h-10 mb-1"
-                    style="
-                      filter: brightness(0) saturate(100%) invert(77%)
-                        sepia(95%) saturate(1352%) hue-rotate(5deg)
-                        brightness(102%) contrast(101%);
-                    "
-                  />
-                  <span class="text-2xl font-bold" style="color: #1f2937"
-                    >999.999.00</span
-                  >
-                </div>
-              </div>
-
-              <!-- My Balance - lg and xl screens -->
-              <div
-                class="outer-gray-container lg:w-full lg:h-[9vh] xl:h-[11vh] lg:min-w-[184px] lg:min-h-[84px] xl:min-w-[214px] xl:min-h-[99px] hidden lg:block mx-auto"
-              >
-                <div class="custom-card w-full h-full px-2 py-1 flex flex-col">
-                  <div class="flex items-start justify-between mb-2">
-                    <h3
-                      class="text-base font-bold lg:text-xs xl:text-sm text-gray-400 text-nowrap"
-                    >
-                      My Balance
-                    </h3>
-                    <img
-                      src="{{ asset('assets/images/wallet.svg') }}"
-                      alt="Wallet"
-                      class="lg:w-5 lg:h-5 xl:w-6 xl:h-6"
-                      style="margin-top: -5px"
-                    />
-                  </div>
-                  <div class="flex flex-col">
-                    <img
-                      src="{{ asset('assets/images/currency.svg') }}"
-                      alt="Currency"
-                      class="lg:w-6 lg:h-6 xl:w-8 xl:h-8 mb-1"
-                      style="
-                        filter: brightness(0) saturate(100%) invert(77%)
-                          sepia(95%) saturate(1352%) hue-rotate(5deg)
-                          brightness(102%) contrast(101%);
-                      "
-                    />
-                    <span
-                      class="text-2xl font-bold lg:text-base xl:text-xl"
-                      style="color: #1f2937"
-                      >999.999.00</span
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <!-- My Cashback - Small screens -->
-              <div
-                class="rounded-2xl overflow-hidden bg-no-repeat bg-center bg-[url('{{ asset("assets/images/small.svg") }}')] w-full max-w-[320px] bg-[length:320px] p-3 lg:hidden"
-              >
-                <div class="flex items-start justify-between px-4 pt-3">
-                  <h3 class="text-base font-bold text-nowrap text-gray-400">
-                    My Cashback
-                  </h3>
-                  <img
-                    src="{{ asset('assets/images/coin.svg') }}"
-                    alt="Coin"
-                    class="w-8 h-8"
-                    style="margin-top: -10px; margin-left: 120px"
-                  />
-                </div>
-                <div class="flex flex-col px-4">
-                  <img
-                    src="{{ asset('assets/images/currency.svg') }}"
-                    alt="Currency"
-                    class="w-10 h-10 mb-1"
-                    style="
-                      filter: brightness(0) saturate(100%) invert(77%)
-                        sepia(95%) saturate(1352%) hue-rotate(5deg)
-                        brightness(102%) contrast(101%);
-                    "
-                  />
-                  <span class="text-2xl font-bold" style="color: #1f2937"
-                    >999.999.00</span
-                  >
-                </div>
-              </div>
-
-              <!-- My Cashback - lg and xl screens -->
-              <div
-                class="outer-gray-container lg:w-full lg:h-[9vh] xl:h-[11vh] lg:min-w-[184px] lg:min-h-[84px] xl:min-w-[214px] xl:min-h-[99px] hidden lg:block mt-2 mx-auto"
-              >
-                <div class="custom-card w-full h-full px-2 py-1 flex flex-col">
-                  <div class="flex items-start justify-between mb-2">
-                    <h3
-                      class="text-base font-bold text-nowrap lg:text-xs xl:text-sm text-gray-400"
-                    >
-                      My Cashback
-                    </h3>
-                    <img
-                      src="{{ asset('assets/images/coin.svg') }}"
-                      alt="Coin"
-                      class="lg:w-5 lg:h-5 xl:w-6 xl:h-6 z-10"
-                      style="margin-top: -5px"
-                    />
-                  </div>
-                  <div class="flex flex-col">
-                    <img
-                      src="{{ asset('assets/images/currency.svg') }}"
-                      alt="Currency"
-                      class="lg:w-6 lg:h-6 xl:w-8 xl:h-8 mb-1"
-                      style="
-                        filter: brightness(0) saturate(100%) invert(77%)
-                          sepia(95%) saturate(1352%) hue-rotate(5deg)
-                          brightness(102%) contrast(101%);
-                      "
-                    />
-                    <span
-                      class="text-2xl font-bold lg:text-base xl:text-xl"
-                      style="color: #1f2937"
-                      >999.999.00</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- My Playlist -->
-            <!-- Small screens: use background image -->
-            <div
-              class="rounded-2xl overflow-hidden bg-no-repeat bg-center bg-[url('{{ asset("assets/images/playlist.svg") }}')] p-6 min-h-[400px] w-full bg-[length:224px] lg:hidden"
-            >
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold" style="color: #9ca3af">
-                  My Playlist
-                </h3>
-                <img
-                  src="{{ asset('assets/images/wallet.svg') }}"
-                  alt="Playlist Icon"
-                  class="w-6 h-6"
-                />
-              </div>
-              <div class="space-y-3">
-                <!-- Free List -->
-                <div
-                  class="rounded-xl p-3 overflow-visible bg-no-repeat bg-center bg-[url('{{ asset("assets/images/plsm.svg") }}')] bg-[length:100%] w-full"
-                >
-                  <div class="flex items-center justify-between mb-2 px-6">
-                    <h4 class="font-semibold text-gray-900">Free List</h4>
-                    <div
-                      class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-check text-white text-xs"></i>
-                    </div>
-                  </div>
-                  <p class="text-xs font-bold text-gray-900 mb-2 px-6">
-                    LIST TITLE
-                  </p>
-                  <div class="flex gap-2 px-6">
-                    <span
-                      class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-xl"
-                      >Free</span
-                    >
-                    <span
-                      class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-xl"
-                      >25 Song</span
-                    >
-                  </div>
-                </div>
-                <!-- Bronze List -->
-                <div
-                  class="rounded-xl p-3 overflow-hidden bg-no-repeat bg-center bg-[url('{{ asset("assets/images/plsm.svg") }}')] bg-[length:100%]"
-                >
-                  <div class="flex items-center justify-between mb-2 px-6">
-                    <h4 class="font-semibold text-gray-900">Bronze list</h4>
-                    <div
-                      class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-check text-white text-xs"></i>
-                    </div>
-                  </div>
-                  <p class="text-xs font-bold text-gray-900 mb-2 px-6">
-                    LIST TITLE
-                  </p>
-                  <div class="flex gap-2 px-6">
-                    <span
-                      class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-xl"
-                      >Monthly</span
-                    >
-                    <span
-                      class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-xl"
-                      >50 Song</span
-                    >
-                  </div>
-                </div>
-                <!-- Silver List -->
-                <div
-                  class="rounded-xl p-3 overflow-hidden bg-no-repeat bg-center bg-[url('{{ asset("assets/images/plsm.svg") }}')] bg-[length:100%]"
-                >
-                  <div class="flex items-center justify-between mb-2 px-6">
-                    <h4 class="font-semibold text-gray-900">Silver list</h4>
-                    <img
-                      src="{{ asset('assets/images/wallet.svg') }}"
-                      alt="Shopping Cart"
-                      class="w-6 h-6"
-                    />
-                  </div>
-                  <p class="text-xs font-bold text-gray-900 mb-2 px-6">
-                    NO TITLE
-                  </p>
-                  <div class="flex gap-2 px-6">
-                    <span
-                      class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-xl"
-                      >Expired</span
-                    >
-                    <span
-                      class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-xl"
-                      >50 Song</span
-                    >
-                  </div>
-                </div>
-                <!-- Gold List -->
-                <div
-                  class="rounded-xl pt-3 px-3 pb-2 overflow-hidden bg-no-repeat bg-center bg-[url('{{ asset("assets/images/plsm.svg") }}')] bg-[length:100%]"
-                >
-                  <div class="flex items-center justify-between mb-2 px-6">
-                    <h4 class="font-semibold text-gray-900">Gold list</h4>
-                    <div
-                      class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center relative"
-                    >
-                      <i class="fas fa-shopping-cart text-white text-xs"></i>
-                      <i
-                        class="fas fa-plus text-white text-[8px] absolute -top-0.5 -right-0.5"
-                      ></i>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between mb-1.5 px-6">
-                    <p class="text-xs font-bold text-gray-900 text-nowrap">
-                      NO TITLE
-                    </p>
-                    <span
-                      class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-xl text-nowrap"
-                      >100 Song</span
-                    >
-                  </div>
-                  <div
-                    class="flex gap-1 bg-green-100 rounded-lg p-1 w-fit mx-auto"
-                  >
-                    <button
-                      class="flex-1 bg-green-500 text-white text-xs font-medium py-1.5 rounded-md"
-                    >
-                      Monthly
-                    </button>
-                    <button
-                      class="flex-1 text-gray-700 text-xs font-medium bg-white border border-green-500 py-1.5 rounded-md"
-                    >
-                      Yearly
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- lg and xl screens: use clip-path with card wrapper -->
-            <div
-              class="outer-gray-container mx-auto lg:w-full lg:h-[42vh] xl:h-[48vh] lg:min-w-[194px] lg:min-h-[394px] xl:min-w-[224px] xl:min-h-[444px] hidden lg:block mt-2"
-            >
-              <div class="custom-card w-full h-full flex flex-col">
-                <div
-                  class="flex items-center justify-between mb-4 lg:mb-4 xl:mb-4 drop-shadow-xl"
-                >
-                  <h3
-                    class="text-lg font-bold lg:text-lg xl:text-lg pl-4"
-                    style="color: #9ca3af"
-                  >
-                    My Playlist
-                  </h3>
-                  <img
-                    src="{{ asset('assets/images/playlisticon.svg') }}"
-                    alt="Playlist Icon"
-                    class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                  />
-                </div>
-                <div
-                  class="space-y-3 lg:space-y-1 xl:space-y-3 flex flex-col items-center"
-                >
-                  <!-- Free List -->
-                  <div
-                    class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%]"
-                  >
-                    <div
-                      class="custom-card px-2 py-1 flex flex-col lg:w-full lg:h-auto"
-                    >
-                      <div class="flex items-center justify-between mb-2">
-                        <h4
-                          class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                        >
-                          Free List
-                        </h4>
-                        <div
-                          class="w-6 h-6 lg:w-5 lg:h-5 bg-green-500 rounded-full flex items-center justify-center"
-                        >
-                          <img
-                            src="{{ asset('assets/images/check.svg') }}"
-                            alt="Playlist Icon"
-                            class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                          />
+                        <div class="glass-card-light rounded-2xl p-4 text-center min-w-[140px]">
+                            <p class="text-xs text-gray-400 mb-1">Balance</p>
+                            <div class="flex items-center justify-center gap-2">
+                                <img src="./assets/icons/currency.svg" alt="Currency" class="w-5 h-5">
+                                <span class="text-xl font-bold text-accent-gold">500.00</span>
+                            </div>
+                            <span class="cashback-badge text-xs px-2 py-0.5 rounded-full text-white mt-2 inline-block">5% CASHBACK</span>
                         </div>
-                      </div>
-                      <p
-                        class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 mb-2"
-                      >
-                        LIST TITLE
-                      </p>
-                      <div class="flex gap-2 lg:gap-1.5">
-                        <span
-                          class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                          >Free</span
-                        >
-                        <span
-                          class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                          >25 Song</span
-                        >
-                      </div>
                     </div>
-                  </div>
+                </div>
 
-                  <!-- Bronze List -->
-                  <div
-                    class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%] mx-auto"
-                  >
-                    <div
-                      class="custom-card px-2 py-1 flex flex-col lg:w-full lg:h-auto"
-                    >
-                      <div class="flex items-center justify-between mb-2">
-                        <h4
-                          class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                        >
-                          Bronze list
-                        </h4>
-                        <div
-                          class="w-6 h-6 lg:w-5 lg:h-5 bg-green-500 rounded-full flex items-center justify-center"
-                        >
-                          <img
-                            src="{{ asset('assets/images/check.svg') }}"
-                            alt="Playlist Icon"
-                            class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                          />
+                <!-- Our Partner Shops -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold">Our Partner Shops</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Shop Card 1 -->
+                        <div class="shop-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
+                            <div class="relative h-44 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                                <img src="./assets/img/shop-photo-1.jpg" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="hidden absolute inset-0 items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800">
+                                    <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div class="absolute top-3 right-3 bg-yellow-400 text-black text-xs px-2 py-1 rounded font-bold shadow">HAIRSALON</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-b-3xl -mt-4 relative z-10">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-md">
+                                        <span>HS</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-gray-900 font-bold text-sm">SuperMarchent Shop</span>
+                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-xs text-gray-500 mt-0.5">
+                                            <span class="text-green-600">🌿</span>
+                                            <span>Rojava</span>
+                                            <span class="text-gray-300">|</span>
+                                            <span class="text-yellow-500">★</span>
+                                            <span class="font-medium">5.0</span>
+                                            <span class="text-gray-400">(3K)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm">SHOP OPEN</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                                        <span class="text-gray-700 font-semibold text-sm">950</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <p
-                        class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 mb-2"
-                      >
-                        LIST TITLE
-                      </p>
-                      <div class="flex gap-2 lg:gap-1.5">
-                        <span
-                          class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                          >Monthly</span
-                        >
-                        <span
-                          class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                          >50 Song</span
-                        >
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Silver List -->
-                  <div
-                    class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%] mx-auto"
-                  >
-                    <div
-                      class="custom-card px-2 py-1 flex flex-col lg:w-full lg:h-auto"
-                    >
-                      <div class="flex items-center justify-between mb-2">
-                        <h4
-                          class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                        >
-                          Silver list
-                        </h4>
-                        <img
-                          src="{{ asset('assets/images/carticon.svg') }}"
-                          alt="Shopping Cart"
-                          class="w-6 h-6 lg:w-5 lg:h-5"
-                        />
-                      </div>
-                      <p
-                        class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 mb-2"
-                      >
-                        NO TITLE
-                      </p>
-                      <div class="flex gap-2 lg:gap-1.5">
-                        <span
-                          class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-red-100 text-red-700 text-xs lg:text-[10px] rounded-xl"
-                          >Expired</span
-                        >
-                        <span
-                          class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl"
-                          >50 Song</span
-                        >
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Gold List -->
-                  <div
-                    class="outer-gray-container drop-shadow-2xl w-[90%] lg:w-[85%] xl:w-[90%] mx-auto"
-                  >
-                    <div
-                      class="custom-card px-2 py-1 flex flex-col lg:w-full lg:h-auto"
-                    >
-                      <div class="flex items-center justify-between mb-2">
-                        <h4
-                          class="font-semibold text-gray-900 lg:text-sm xl:text-base"
-                        >
-                          Gold list
-                        </h4>
-                        <div
-                          class="w-6 h-6 lg:w-5 lg:h-5 flex items-center justify-center relative"
-                        >
-                          <img
-                            src="{{ asset('assets/images/carticon.svg') }}"
-                            alt="Playlist Icon"
-                            class="w-6 h-6 lg:w-6 lg:h-6 xl:w-6 xl:h-6"
-                          />
+                        <!-- Shop Card 2 -->
+                        <div class="shop-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
+                            <div class="relative h-44 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                                <img src="./assets/img/shop-photo-2.jpg" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="hidden absolute inset-0 items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800">
+                                    <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div class="absolute top-3 right-3 bg-yellow-400 text-black text-xs px-2 py-1 rounded font-bold shadow">HAIRSALON</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-b-3xl -mt-4 relative z-10">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-md">
+                                        <span>HS</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-gray-900 font-bold text-sm">SuperMarchent Shop</span>
+                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-xs text-gray-500 mt-0.5">
+                                            <span class="text-green-600">🌿</span>
+                                            <span>Rojava</span>
+                                            <span class="text-gray-300">|</span>
+                                            <span class="text-yellow-500">★</span>
+                                            <span class="font-medium">5.0</span>
+                                            <span class="text-gray-400">(3K)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm">SHOP OPEN</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                                        <span class="text-gray-700 font-semibold text-sm">950</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div class="flex items-center justify-between mb-1.5">
-                        <p
-                          class="text-xs lg:text-[10px] xl:text-xs font-bold text-gray-900 text-nowrap"
-                        >
-                          NO TITLE
-                        </p>
-                        <span
-                          class="px-2 py-1 lg:px-1.5 lg:py-0.5 bg-green-100 text-green-700 text-xs lg:text-[10px] rounded-xl text-nowrap"
-                          >100 Song</span
-                        >
-                      </div>
-                      <div
-                        class="flex gap-1 bg-green-500 rounded-lg w-fit mx-auto"
-                      >
-                        <button
-                          class="flex-1 bg-green-500 text-white text-xs lg:text-[10px] font-medium rounded-md"
-                        >
-                          Monthly
+                        <!-- Shop Card 3 -->
+                        <div class="shop-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
+                            <div class="relative h-44 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                                <img src="./assets/img/shop-photo-3.jpg" alt="Shop" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="hidden absolute inset-0 items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800">
+                                    <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div class="absolute top-3 right-3 bg-yellow-400 text-black text-xs px-2 py-1 rounded font-bold shadow">HAIRSALON</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-b-3xl -mt-4 relative z-10">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-md">
+                                        <span>HS</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-gray-900 font-bold text-sm">SuperMarchent Shop</span>
+                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-xs text-gray-500 mt-0.5">
+                                            <span class="text-green-600">🌿</span>
+                                            <span>Rojava</span>
+                                            <span class="text-gray-300">|</span>
+                                            <span class="text-yellow-500">★</span>
+                                            <span class="font-medium">5.0</span>
+                                            <span class="text-gray-400">(3K)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm">SHOP OPEN</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                                        <span class="text-gray-700 font-semibold text-sm">950</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Choose Your Plan Section -->
+                <div class="space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div>
+                            <h3 class="text-xl font-bold dark:text-white text-gray-900">Choose Your Plan</h3>
+                            <p class="text-sm dark:text-gray-400 text-gray-500">Select monthly or Yearly Plan</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <!-- Cultivated Plan -->
+                        <div class="bg-white rounded-3xl p-6 relative shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+                            <div class="mb-4">
+                                <span class="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500 text-white">Currently Activated</span>
+                            </div>
+                            <div class="mb-2">
+                                <img src="assets/img/cultivated-label.svg" alt="Cultivated" class="h-12">
+                            </div>
+                            <div class="mb-4">
+                                <p class="text-sm text-emerald-500 font-medium">Current access</p>
+                            </div>
+                            <div class="flex items-center gap-1 mb-4">
+                                <img src="assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                                <span class="text-5xl font-bold text-gray-900">0.00</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-6 leading-relaxed text-center">For individual use with 30 summaries a month, no ads, and basic support.</p>
+                            <div class="flex justify-center mb-6">
+                                <img src="assets/img/cultivated-service.svg" alt="Cultivated features" class="h-16">
+                            </div>
+                            <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Follow Users</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Enjoy Music</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Enjoy Videos</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Standard Wallet</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Get cashback</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>and more</li>
+                            </ul>
+                            <button class="w-full py-3.5 rounded-2xl text-sm font-bold bg-amber-400 text-gray-800 cursor-default">Your Current Plan</button>
+                        </div>
+
+                        <!-- Educated Plan -->
+                        <div class="bg-white rounded-3xl p-6 relative shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="inline-flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                    <button class="px-4 py-1.5 text-xs font-medium bg-gray-800 text-white">Monthly</button>
+                                    <button class="px-4 py-1.5 text-xs font-medium text-gray-500 bg-white">Yearly</button>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <img src="assets/img/educated-label.svg" alt="Educated" class="h-12">
+                            </div>
+                            <div class="mb-4">
+                                <p class="text-sm text-emerald-500 font-medium">Manage access</p>
+                            </div>
+                            <div class="flex items-center gap-1 mb-4">
+                                <img src="assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                                <span class="text-5xl font-bold text-gray-900">0.00</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-6 leading-relaxed text-center">Unlimited summaries, customization, quick support, & app integrations for professionals.</p>
+                            <div class="flex justify-center mb-6">
+                                <img src="assets/img/educated-service.svg" alt="Educated features" class="h-16">
+                            </div>
+                            <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Follow Users</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Enjoy Music</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Enjoy Videos</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Create Channel</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Text Comments</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Voice Comment</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Business Wallet</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Get cashback</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>and more</li>
+                            </ul>
+                            <button class="w-full py-3.5 rounded-2xl text-sm font-bold bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 hover:shadow-lg transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                Add To Cart
+                            </button>
+                        </div>
+
+                        <!-- Academic Plan -->
+                        <div class="bg-white rounded-3xl p-6 relative shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="inline-flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                    <button class="px-4 py-1.5 text-xs font-medium bg-gray-800 text-white">Monthly</button>
+                                    <button class="px-4 py-1.5 text-xs font-medium text-gray-500 bg-white">Yearly</button>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h4 class="text-2xl font-bold text-gray-900 mb-1">Academic</h4>
+                                <p class="text-sm text-emerald-500 font-medium">Manage access</p>
+                            </div>
+                            <div class="flex items-center gap-1 mb-4">
+                                <img src="assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                                <span class="text-5xl font-bold text-gray-900">0.00</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-6 leading-relaxed text-center">Team-focused with priority support, API access, and advanced security options.</p>
+                            <div class="flex justify-center mb-6">
+                                <img src="assets/img/academic-service.svg" alt="Academic features" class="h-20">
+                            </div>
+                            <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Follow Users</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Enjoy Music</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Enjoy Videos</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Create Channel</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Text Comments</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Voice Comment</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Business Wallet</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-400">Get cashback</span></li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>and more</li>
+                            </ul>
+                            <button class="w-full py-3.5 rounded-2xl text-sm font-bold bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 hover:shadow-lg transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                Add To Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upgrade Music Playlist -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold dark:text-white text-gray-900">Upgrade Music Playlist</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Bronze Playlist -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                            <div class="relative h-44 overflow-hidden">
+                                <img src="./assets/img/bronze-playlist.svg" alt="Bronze Playlist" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="mb-3">
+                                    <h4 class="font-bold text-gray-900">Bronze Playlist</h4>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-500">Playlist Songs</span>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="font-bold text-emerald-500">50 Songs</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-orange-500">1000</span>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all mb-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                                <div class="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <span class="text-xs font-medium text-emerald-700">Auto Charge</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Silver Playlist -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                            <div class="relative h-44 overflow-hidden">
+                                <img src="./assets/img/silver-playlist.svg" alt="Silver Playlist" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="mb-3">
+                                    <h4 class="font-bold text-gray-900">Silver Playlist</h4>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-500">Playlist Songs</span>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="font-bold text-emerald-500">75 Songs</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-orange-500">1000</span>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all mb-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                                <div class="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <span class="text-xs font-medium text-emerald-700">Auto Charge</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Gold Playlist -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                            <div class="relative h-44 overflow-hidden">
+                                <img src="./assets/img/gold-playlist.svg" alt="Gold Playlist" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="mb-3">
+                                    <h4 class="font-bold text-gray-900">Gold Playlist</h4>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-500">Playlist Songs</span>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="font-bold text-emerald-500">100 Songs</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-orange-500">1000</span>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all mb-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                                <div class="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <span class="text-xs font-medium text-emerald-700">Auto Charge</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Streaming Minutes -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold dark:text-white text-gray-900">Streaming Minutes</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Bronze Stream -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                            <div class="relative h-44 overflow-hidden">
+                                <img src="./assets/img/bronze-stream.svg" alt="Bronze Stream" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="mb-3">
+                                    <h4 class="font-bold text-gray-900">Bronze Stream</h4>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-500">Minute</span>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="font-bold text-emerald-500">60 Min</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-orange-500">500</span>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all mb-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                                <div class="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <span class="text-xs font-medium text-emerald-700">Auto Charge</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Silver Stream -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                            <div class="relative h-44 overflow-hidden">
+                                <img src="./assets/img/silver-stream.svg" alt="Silver Stream" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="mb-3">
+                                    <h4 class="font-bold text-gray-900">Silver Stream</h4>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-500">Minute</span>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="font-bold text-emerald-500">120 Min</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-orange-500">900</span>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all mb-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                                <div class="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <span class="text-xs font-medium text-emerald-700">Auto Charge</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Gold Stream -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                            <div class="relative h-44 overflow-hidden">
+                                <img src="./assets/img/gold-stream.svg" alt="Gold Stream" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white">5% CASHBACK</span>
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="mb-3">
+                                    <h4 class="font-bold text-gray-900">Gold Stream</h4>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-500">Minute</span>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="font-bold text-emerald-500">180 Min</span>
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-orange-500">1200</span>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all mb-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                                <div class="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <span class="text-xs font-medium text-emerald-700">Auto Charge</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Standard Zer Packages -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold">Standard Zer packages</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Bronze Pack -->
+                        <div class="package-card rounded-2xl overflow-hidden shadow-lg">
+                            <div class="h-48 overflow-hidden">
+                                <img src="./assets/img/bronze-pack.svg" alt="Bronze Pack" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold">Bronze Pack</h4>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-orange-500">1000</span>
+                                    </div>
+                                    <span class="font-bold text-cyan-600">€ 49.99</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-3">Use your Balance on YekBûn</p>
+                                <div class="flex gap-2 mb-4">
+                                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2l2-2h4l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4zm-3.5 5h7c.83 0 1.5.67 1.5 1.5S16.33 10 15.5 10h-7C7.67 10 7 9.33 7 8.5S7.67 7 8.5 7zm-1 7c-.83 0-1.5-.67-1.5-1.5S6.67 11 7.5 11s1.5.67 1.5 1.5S8.33 14 7.5 14zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-11H5.67l-.44-4h13.53l-.43 4z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium btn-cyan text-white flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Silver Pack -->
+                        <div class="package-card rounded-2xl overflow-hidden shadow-lg">
+                            <div class="h-48 overflow-hidden">
+                                <img src="./assets/img/silver-pack.svg" alt="Silver Pack" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold">Silver Pack</h4>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-gray-500">1000</span>
+                                    </div>
+                                    <span class="font-bold text-cyan-600">€ 49.99</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-3">Use your Balance on YekBûn</p>
+                                <div class="flex gap-2 mb-4">
+                                    <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2l2-2h4l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4zm-3.5 5h7c.83 0 1.5.67 1.5 1.5S16.33 10 15.5 10h-7C7.67 10 7 9.33 7 8.5S7.67 7 8.5 7zm-1 7c-.83 0-1.5-.67-1.5-1.5S6.67 11 7.5 11s1.5.67 1.5 1.5S8.33 14 7.5 14zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-11H5.67l-.44-4h13.53l-.43 4z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium btn-cyan text-white flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Gold Pack -->
+                        <div class="package-card rounded-2xl overflow-hidden shadow-lg">
+                            <div class="h-48 overflow-hidden">
+                                <img src="./assets/img/gold-pack.svg" alt="Gold Pack" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold">Gold Pack</h4>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-yellow-500">1000</span>
+                                    </div>
+                                    <span class="font-bold text-cyan-600">€ 49.99</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-3">Use your Balance on YekBûn</p>
+                                <div class="flex gap-2 mb-4">
+                                    <div class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2l2-2h4l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4zm-3.5 5h7c.83 0 1.5.67 1.5 1.5S16.33 10 15.5 10h-7C7.67 10 7 9.33 7 8.5S7.67 7 8.5 7zm-1 7c-.83 0-1.5-.67-1.5-1.5S6.67 11 7.5 11s1.5.67 1.5 1.5S8.33 14 7.5 14zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-11H5.67l-.44-4h13.53l-.43 4z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                                    </div>
+                                    <div class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium btn-cyan text-white flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Zer Packages -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold">Business Zer packages</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- Titanium Pack -->
+                        <div class="package-card rounded-2xl overflow-hidden shadow-lg">
+                            <div class="h-48 overflow-hidden bg-gradient-to-br from-gray-300 to-gray-400">
+                                <img src="./assets/img/titanium-pack.svg" alt="Titanium Pack" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold">Titanium Pack</h4>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-gray-600">1000</span>
+                                    </div>
+                                    <span class="font-bold text-cyan-600">€ 49.99</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4">Use your Balance on YekBûn</p>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium btn-cyan text-white flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Platinum Pack -->
+                        <div class="package-card rounded-2xl overflow-hidden shadow-lg">
+                            <div class="h-48 overflow-hidden bg-gradient-to-br from-gray-400 to-gray-500">
+                                <img src="./assets/img/platinum-pack.svg" alt="Platinum Pack" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold">Platinum Pack</h4>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-gray-500">1000</span>
+                                    </div>
+                                    <span class="font-bold text-cyan-600">€ 49.99</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4">Use your Balance on YekBûn</p>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium btn-cyan text-white flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Rhodium Pack -->
+                        <div class="package-card rounded-2xl overflow-hidden shadow-lg">
+                            <div class="h-48 overflow-hidden bg-gradient-to-br from-gray-800 to-black">
+                                <img src="./assets/img/diamond-pack.svg" alt="Rhodium Pack" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 text-gray-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold">Rhodium Pack</h4>
+                                    <span class="text-xs text-gray-500">Price</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-1">
+                                        <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                        <span class="font-bold text-yellow-600">1000</span>
+                                    </div>
+                                    <span class="font-bold text-cyan-600">€ 49.99</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4">Use your Balance on YekBûn</p>
+                                <button class="w-full py-2.5 rounded-xl text-sm font-medium btn-cyan text-white flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    Add To Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column - Cart/Summary -->
+            <div class="lg:col-span-1">
+                <div id="cartPanel" class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto bg-white rounded-t-3xl lg:rounded-3xl p-5 sm:p-6 lg:sticky lg:top-24 shadow-xl z-40 transform translate-y-full lg:translate-y-0 transition-transform duration-300 ease-out max-h-[75vh] lg:max-h-none overflow-y-auto">
+                    <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-2 lg:hidden cursor-pointer" onclick="toggleMobileCart()"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">My Cart</h3>
+                        <button onclick="toggleMobileCart()" class="lg:hidden w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-all">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
                         </button>
-                        <button
-                          class="flex-1 text-gray-700 text-xs lg:text-[10px] font-medium bg-white border border-green-500 rounded-md"
-                        >
-                          Yearly
-                        </button>
-                      </div>
                     </div>
-                  </div>
+
+                    <div id="cartItems" class="space-y-4 mb-6">
+                        <!-- Cart Item 1 - Gold Pack -->
+                        <div class="flex items-center gap-3 py-3 border-b border-gray-100">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-yellow-400 to-yellow-600">
+                                <img src="./assets/img/gold-pack.svg" alt="Gold Pack" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-gray-900 text-sm">Gold Pack</h4>
+                                <p class="text-xs text-gray-500">1000 Zer</p>
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-600">5%</span>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <div class="flex items-center gap-1 justify-end">
+                                    <span class="text-xs text-gray-500">€</span>
+                                    <span class="font-bold text-emerald-500">49,99</span>
+                                </div>
+                                <span class="text-xs text-gray-400 line-through">59,99</span>
+                            </div>
+                            <button onclick="removeCartItem(this)" class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-200 transition-all flex-shrink-0">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Cart Item 2 - Gold List -->
+                        <div class="flex items-center gap-3 py-3 border-b border-gray-100">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img src="./assets/img/gold-playlist.svg" alt="Gold List" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-gray-900 text-sm">Gold list</h4>
+                                <p class="text-xs text-gray-500">100 Songs</p>
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-600">5%</span>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <div class="flex items-center gap-1 justify-end">
+                                    <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                    <span class="font-bold text-emerald-500">475.00</span>
+                                </div>
+                                <span class="text-xs text-gray-400 line-through">500.00</span>
+                            </div>
+                            <button onclick="removeCartItem(this)" class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-200 transition-all flex-shrink-0">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Cart Item 3 - Silver Stream -->
+                        <div class="flex items-center gap-3 py-3 border-b border-gray-100">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img src="./assets/img/silver-stream.svg" alt="Silver" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-gray-900 text-sm">Silver</h4>
+                                <p class="text-xs text-gray-500">2000 Min</p>
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-600">5%</span>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <div class="flex items-center gap-1 justify-end">
+                                    <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                    <span class="font-bold text-emerald-500">475.00</span>
+                                </div>
+                                <span class="text-xs text-gray-400 line-through">500.00</span>
+                            </div>
+                            <button onclick="removeCartItem(this)" class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-200 transition-all flex-shrink-0">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Cart Item 4 - Upgrade Academic -->
+                        <div class="flex items-center gap-3 py-3 border-b border-gray-100">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img src="./assets/img/academic-service.svg" alt="Upgrade" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-gray-900 text-sm">Upgrade</h4>
+                                <p class="text-xs text-gray-500">Academic</p>
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-600">5%</span>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <div class="flex items-center gap-1 justify-end">
+                                    <img src="./assets/icons/currency.svg" alt="" class="w-4 h-4">
+                                    <span class="font-bold text-emerald-500">475.00</span>
+                                </div>
+                                <span class="text-xs text-gray-400 line-through">500.00</span>
+                            </div>
+                            <button onclick="removeCartItem(this)" class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-200 transition-all flex-shrink-0">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Payment Details -->
+                    <h4 class="font-bold text-gray-900 mb-4">Payment Details</h4>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">Account Upgrade</span>
+                            <span class="text-gray-900">€ 50.00</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <img src="./assets/icons/cashback-badge.svg" alt="5% Cashback" class="h-6">
+                                <span class="text-gray-500">YekBûn 5%</span>
+                            </div>
+                            <span class="text-gray-900">€ 50.00</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <img src="./assets/icons/cashback-badge.svg" alt="5% Cashback" class="h-6">
+                                <span class="text-gray-500">YekBun 5%</span>
+                            </div>
+                            <span class="text-gray-900">€ 50.00</span>
+                        </div>
+                        <div class="border-t border-gray-200 pt-3">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="font-semibold text-gray-900">Subtotal Net</span>
+                                <span class="text-gray-900">€ 50.00</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <img src="./assets/icons/cashback-badge.svg" alt="5% Cashback" class="h-6">
+                                <span class="text-gray-500">YekBun 5%</span>
+                            </div>
+                            <span class="text-gray-900">€ 50.00</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-6 pt-4 border-t border-gray-200">
+                        <span class="font-bold text-emerald-500">To Pay</span>
+                        <div class="flex items-center gap-1">
+                            <img src="./assets/icons/currency.svg" alt="" class="w-5 h-5">
+                            <span class="text-xl font-bold text-emerald-500">54.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <h4 class="font-bold text-gray-900 mb-4">Payment Methods</h4>
+                    <div class="space-y-3 mb-6">
+                        <!-- My Balance -->
+                        <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-emerald-300 transition-all cursor-pointer">
+                            <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="./assets/icons/currency.svg" alt="Balance" class="w-full h-full object-contain">
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-semibold text-gray-900 text-sm">My Balance</h5>
+                                <p class="text-xs text-gray-500">999,999.00</p>
+                            </div>
+                            <div class="w-5 h-5 rounded-full border-2 border-emerald-500 flex items-center justify-center">
+                                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                            </div>
+                        </div>
+                        <!-- Pay In Store -->
+                        <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-emerald-300 transition-all cursor-pointer">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <img src="./assets/icons/cash-payment.svg" alt="Pay In Store" class="w-6 h-6">
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-semibold text-gray-900 text-sm">Pay In Store</h5>
+                                <p class="text-xs text-gray-500">Select on of our Payment Methode</p>
+                            </div>
+                            <div class="w-5 h-5 rounded-full border-2 border-gray-300"></div>
+                        </div>
+                        <!-- Bank Transfer -->
+                        <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-emerald-300 transition-all cursor-pointer">
+                            <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="./assets/icons/banktransfer.svg" alt="Bank Transfer" class="w-full h-full object-contain">
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-semibold text-gray-900 text-sm">Bank Transfer</h5>
+                                <p class="text-xs text-gray-500">Select on of our Payment Methode</p>
+                            </div>
+                            <div class="w-5 h-5 rounded-full border-2 border-gray-300"></div>
+                        </div>
+                        <!-- PayPal -->
+                        <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-emerald-300 transition-all cursor-pointer">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <span class="text-blue-600 font-bold text-xs">PayPal</span>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-semibold text-gray-900 text-sm">PayPal</h5>
+                                <p class="text-xs text-gray-500">Select on of our Payment Methode</p>
+                            </div>
+                            <div class="w-5 h-5 rounded-full border-2 border-gray-300"></div>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-4 rounded-full text-sm font-bold bg-emerald-500 text-white flex items-center justify-center gap-2 hover:bg-emerald-600 hover:shadow-lg transition-all">
+                        Check Out
+                    </button>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
+    </main>
 
-        <!-- Main Content -->
-        <div class="lg:col-span-3 pb-6">
-          @include('partials.dashboard-main-them2')
-        </div>
-        <!--  -->
-      </div>
-    </div>
-
-    <!-- Cart Modal -->
-    <div
-      id="cart-modal"
-      class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-    >
-      <div
-        class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-hidden flex flex-col"
-      >
-        <!-- Header -->
-        <div
-          class="p-4 border-b border-gray-200 flex items-center justify-between bg-white"
-        >
-          <h2 class="text-2xl font-bold text-gray-900">Shopping Cart</h2>
-          <button
-            onclick="closeCart()"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            <i class="fas fa-times text-xl"></i>
-          </button>
-        </div>
-
-        <!-- Main Content - Two Column Layout -->
-        <div class="flex-1 overflow-y-auto">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
-            <!-- Left Panel -->
-            <div class="space-y-6">
-              <!-- Please choice Section -->
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">
-                  Please choice
-                </h3>
-                <p class="text-gray-600 text-sm mb-4">Pay online or Pay Cash</p>
-                <div class="grid grid-cols-2 gap-4">
-                  <!-- My Balance Card -->
-                  <div class="outer-gray-container drop-shadow-2xl">
-                    <div class="custom-card px-4 py-1 flex flex-row gap-4">
-                      <div class="flex items-center justify-between mb-3">
-                        <img
-                          src="{{ asset('assets/images/monthly.svg') }}"
-                          alt="Currency"
-                          class="w-[60px] h-[92px]"
-                        />
-                      </div>
-                      <div class="flex flex-col">
-                        <div>
-                          <h4 class="text-lg font-bold text-gray-900 mb-1">
-                            My Balance
-                          </h4>
-                        </div>
-                        <div class="flex flex-row justify-between items-center">
-                          <img
-                            src="{{ asset('assets/images/currency.svg') }}"
-                            alt="Currency"
-                            class="w-[24px] h-[24px]"
-                          />
-                        </div>
-                        <div
-                          class="flex flex-row justify-between items-center gap-16"
-                        >
-                          <p class="text-lg font-normal">999.999.00</p>
-                          <img
-                            src="{{ asset('assets/images/cart1.svg') }}"
-                            alt="Zer"
-                            class="w-[24px] h-[24px]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Pay In Store Card -->
-                  <div class="outer-gray-container drop-shadow-2xl">
-                    <div class="custom-card px-4 py-1 flex flex-row gap-4">
-                      <div class="flex items-center justify-between mb-3">
-                        <img
-                          src="{{ asset('assets/images/pay.svg') }}"
-                          alt="Currency"
-                          class="w-[90px] h-[90px]"
-                        />
-                      </div>
-                      <div class="flex flex-col justify-between">
-                        <div>
-                          <h4 class="text-lg font-bold text-gray-900 mb-1">
-                            Pay In Store
-                          </h4>
-                        </div>
-                        <p class="text-xs font-normal text-gray-600">
-                          Select on of our Payment Methode
-                        </p>
-                        <div
-                          class="flex flex-row justify-end items-center gap-2"
-                        >
-                          <img
-                            src="{{ asset('assets/images/cart1.svg') }}"
-                            alt="Cart"
-                            class="w-[24px] h-[24px]"
-                          />
-                          <img
-                            src="{{ asset('assets/images/cart2.svg') }}"
-                            alt="Currency"
-                            class="w-[24px] h-[24px]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Bank Transfer Card -->
-                  <div class="outer-gray-container drop-shadow-2xl">
-                    <div class="custom-card px-4 py-1 flex flex-row gap-4">
-                      <div class="flex items-center justify-between mb-3">
-                        <img
-                          src="{{ asset('assets/images/pay.svg') }}"
-                          alt="Currency"
-                          class="w-[90px] h-[90px]"
-                        />
-                      </div>
-                      <div class="flex flex-col">
-                        <div>
-                          <h4 class="text-lg font-bold text-gray-900 mb-1">
-                            Bank Transfer
-                          </h4>
-                        </div>
-                        <p class="text-xs font-normal text-gray-600">
-                          Select on of our Payment Methode
-                        </p>
-                        <div
-                          class="flex flex-row justify-end items-center gap-2"
-                        >
-                          <img
-                            src="{{ asset('assets/images/cart3.svg') }}"
-                            alt="Cart"
-                            class="w-[24px] h-[24px]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- PayPal Card -->
-                  <div class="outer-gray-container drop-shadow-2xl">
-                    <div class="custom-card px-4 py-1 flex flex-row gap-4">
-                      <div class="flex items-center justify-between mb-3">
-                        <img
-                          src="{{ asset('assets/images/pay.svg') }}"
-                          alt="Currency"
-                          class="w-[90px] h-[90px]"
-                        />
-                      </div>
-                      <div class="flex flex-col">
-                        <div>
-                          <h4 class="text-lg font-bold text-gray-900 mb-1">
-                            PayPal
-                          </h4>
-                        </div>
-                        <p class="text-xs font-normal text-gray-600">
-                          Select on of our Payment Methode
-                        </p>
-                        <div
-                          class="flex flex-row justify-end items-center gap-2"
-                        >
-                          <img
-                            src="{{ asset('assets/images/cart2.svg') }}"
-                            alt="Currency"
-                            class="w-[24px] h-[24px]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Partner Shops Section -->
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">
-                  Partner Shops
-                </h3>
-                <p class="text-gray-600 text-sm mb-4">Shops in your area</p>
-                <div
-                  class="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto"
-                >
-                  <!-- Partner Shop Cards -->
-                  <div class="outer-gray-container rounded-2xl">
-                    <div class="custom-card p-0 overflow-visible">
-                      <div class="relative">
-                        <img
-                          src="{{ asset('assets/images/part1.svg') }}"
-                          alt="Partner Shop"
-                          class="w-full h-32 object-cover rounded-t-2xl"
-                        />
-                        <div
-                          class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-red-500 font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10"
-                        >
-                          <i class="fas fa-heart text-sm"></i>
-                          <span class="text-gray-900 font-bold text-xs"
-                            >950</span
-                          >
-                        </div>
-                        <div class="absolute -bottom-8 left-3 z-20">
-                          <div class="relative">
-                            <div
-                              class="w-16 h-16 rounded-3xl border border-white overflow-hidden"
-                            >
-                              <img
-                                src="{{ asset('assets/images/part11.svg') }}"
-                                alt="Shop Logo"
-                                class="w-[83px] object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="p-3 pt-6">
-                        <div class="flex-1 min-w-0 ml-20">
-                          <div class="flex items-center gap-1 mb-1">
-                            <h3
-                              class="text-sm font-bold text-gray-900 truncate"
-                            >
-                              SuperMarchent Shop
-                            </h3>
-                            <i
-                              class="fas fa-check-circle text-green-500 text-xs"
-                            ></i>
-                          </div>
-                          <div
-                            class="flex flex-wrap items-center gap-2 text-xs"
-                          >
-                            <div class="flex items-center gap-1 text-gray-700">
-                              <img
-                                src="{{ asset('assets/images/flag.svg') }}"
-                                alt="Country"
-                                class="w-3 h-3"
-                              />
-                              <span class="text-[10px] font-semibold"
-                                >Rojava</span
-                              >
-                            </div>
-                            <div
-                              class="flex items-center gap-1 text-orange-500 font-semibold"
-                            >
-                              <i class="fas fa-star text-xs"></i>
-                              <span class="text-[10px] font-semibold">5.0</span>
-                              <span class="text-gray-500 text-[10px]"
-                                >(3K)</span
-                              >
-                            </div>
-                          </div>
-                          <div class="mt-2">
-                            <span
-                              class="px-2 py-0.5 rounded-full bg-green-500 text-white text-[8px] font-semibold"
-                            >
-                              SHOP OPEN
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Repeat shop cards -->
-                  <div class="outer-gray-container rounded-2xl">
-                    <div class="custom-card p-0 overflow-visible">
-                      <div class="relative">
-                        <img
-                          src="{{ asset('assets/images/part1.svg') }}"
-                          alt="Partner Shop"
-                          class="w-full h-32 object-cover rounded-t-2xl"
-                        />
-                        <div
-                          class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-red-500 font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10"
-                        >
-                          <i class="fas fa-heart text-sm"></i>
-                          <span class="text-gray-900 font-bold text-xs"
-                            >950</span
-                          >
-                        </div>
-                        <div class="absolute -bottom-8 left-3 z-20">
-                          <div class="relative">
-                            <div
-                              class="w-16 h-16 rounded-3xl border border-white overflow-hidden"
-                            >
-                              <img
-                                src="{{ asset('assets/images/part11.svg') }}"
-                                alt="Shop Logo"
-                                class="w-[83px] object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="p-3 pt-6">
-                        <div class="flex-1 min-w-0 ml-20">
-                          <div class="flex items-center gap-1 mb-1">
-                            <h3
-                              class="text-sm font-bold text-gray-900 truncate"
-                            >
-                              SuperMarchent Shop
-                            </h3>
-                            <i
-                              class="fas fa-check-circle text-green-500 text-xs"
-                            ></i>
-                          </div>
-                          <div
-                            class="flex flex-wrap items-center gap-2 text-xs"
-                          >
-                            <div class="flex items-center gap-1 text-gray-700">
-                              <img
-                                src="{{ asset('assets/images/flag.svg') }}"
-                                alt="Country"
-                                class="w-3 h-3"
-                              />
-                              <span class="text-[10px] font-semibold"
-                                >Rojava</span
-                              >
-                            </div>
-                            <div
-                              class="flex items-center gap-1 text-orange-500 font-semibold"
-                            >
-                              <i class="fas fa-star text-xs"></i>
-                              <span class="text-[10px] font-semibold">5.0</span>
-                              <span class="text-gray-500 text-[10px]"
-                                >(3K)</span
-                              >
-                            </div>
-                          </div>
-                          <div class="mt-2">
-                            <span
-                              class="px-2 py-0.5 rounded-full bg-green-500 text-white text-[8px] font-semibold"
-                            >
-                              SHOP OPEN
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="outer-gray-container rounded-2xl">
-                    <div class="custom-card p-0 overflow-visible">
-                      <div class="relative">
-                        <img
-                          src="{{ asset('assets/images/part1.svg') }}"
-                          alt="Partner Shop"
-                          class="w-full h-32 object-cover rounded-t-2xl"
-                        />
-                        <div
-                          class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-red-500 font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10"
-                        >
-                          <i class="fas fa-heart text-sm"></i>
-                          <span class="text-gray-900 font-bold text-xs"
-                            >950</span
-                          >
-                        </div>
-                        <div class="absolute -bottom-8 left-3 z-20">
-                          <div class="relative">
-                            <div
-                              class="w-16 h-16 rounded-3xl border border-white overflow-hidden"
-                            >
-                              <img
-                                src="{{ asset('assets/images/part11.svg') }}"
-                                alt="Shop Logo"
-                                class="w-[83px] object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="p-3 pt-6">
-                        <div class="flex-1 min-w-0 ml-20">
-                          <div class="flex items-center gap-1 mb-1">
-                            <h3
-                              class="text-sm font-bold text-gray-900 truncate"
-                            >
-                              SuperMarchent Shop
-                            </h3>
-                            <i
-                              class="fas fa-check-circle text-green-500 text-xs"
-                            ></i>
-                          </div>
-                          <div
-                            class="flex flex-wrap items-center gap-2 text-xs"
-                          >
-                            <div class="flex items-center gap-1 text-gray-700">
-                              <img
-                                src="{{ asset('assets/images/flag.svg') }}"
-                                alt="Country"
-                                class="w-3 h-3"
-                              />
-                              <span class="text-[10px] font-semibold"
-                                >Rojava</span
-                              >
-                            </div>
-                            <div
-                              class="flex items-center gap-1 text-orange-500 font-semibold"
-                            >
-                              <i class="fas fa-star text-xs"></i>
-                              <span class="text-[10px] font-semibold">5.0</span>
-                              <span class="text-gray-500 text-[10px]"
-                                >(3K)</span
-                              >
-                            </div>
-                          </div>
-                          <div class="mt-2">
-                            <span
-                              class="px-2 py-0.5 rounded-full bg-green-500 text-white text-[8px] font-semibold"
-                            >
-                              SHOP OPEN
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="outer-gray-container rounded-2xl">
-                    <div class="custom-card p-0 overflow-visible">
-                      <div class="relative">
-                        <img
-                          src="{{ asset('assets/images/part1.svg') }}"
-                          alt="Partner Shop"
-                          class="w-full h-32 object-cover rounded-t-2xl"
-                        />
-                        <div
-                          class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-red-500 font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10"
-                        >
-                          <i class="fas fa-heart text-sm"></i>
-                          <span class="text-gray-900 font-bold text-xs"
-                            >950</span
-                          >
-                        </div>
-                        <div class="absolute -bottom-8 left-3 z-20">
-                          <div class="relative">
-                            <div
-                              class="w-16 h-16 rounded-3xl border border-white overflow-hidden"
-                            >
-                              <img
-                                src="{{ asset('assets/images/part11.svg') }}"
-                                alt="Shop Logo"
-                                class="w-[83px] object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="p-3 pt-6">
-                        <div class="flex-1 min-w-0 ml-20">
-                          <div class="flex items-center gap-1 mb-1">
-                            <h3
-                              class="text-sm font-bold text-gray-900 truncate"
-                            >
-                              SuperMarchent Shop
-                            </h3>
-                            <i
-                              class="fas fa-check-circle text-green-500 text-xs"
-                            ></i>
-                          </div>
-                          <div
-                            class="flex flex-wrap items-center gap-2 text-xs"
-                          >
-                            <div class="flex items-center gap-1 text-gray-700">
-                              <img
-                                src="{{ asset('assets/images/flag.svg') }}"
-                                alt="Country"
-                                class="w-3 h-3"
-                              />
-                              <span class="text-[10px] font-semibold"
-                                >Rojava</span
-                              >
-                            </div>
-                            <div
-                              class="flex items-center gap-1 text-orange-500 font-semibold"
-                            >
-                              <i class="fas fa-star text-xs"></i>
-                              <span class="text-[10px] font-semibold">5.0</span>
-                              <span class="text-gray-500 text-[10px]"
-                                >(3K)</span
-                              >
-                            </div>
-                          </div>
-                          <div class="mt-2">
-                            <span
-                              class="px-2 py-0.5 rounded-full bg-green-500 text-white text-[8px] font-semibold"
-                            >
-                              SHOP OPEN
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="outer-gray-container rounded-2xl">
-                    <div class="custom-card p-0 overflow-visible">
-                      <div class="relative">
-                        <img
-                          src="{{ asset('assets/images/part1.svg') }}"
-                          alt="Partner Shop"
-                          class="w-full h-32 object-cover rounded-t-2xl"
-                        />
-                        <div
-                          class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-red-500 font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10"
-                        >
-                          <i class="fas fa-heart text-sm"></i>
-                          <span class="text-gray-900 font-bold text-xs"
-                            >950</span
-                          >
-                        </div>
-                        <div class="absolute -bottom-8 left-3 z-20">
-                          <div class="relative">
-                            <div
-                              class="w-16 h-16 rounded-3xl border border-white overflow-hidden"
-                            >
-                              <img
-                                src="{{ asset('assets/images/part11.svg') }}"
-                                alt="Shop Logo"
-                                class="w-[83px] object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="p-3 pt-6">
-                        <div class="flex-1 min-w-0 ml-20">
-                          <div class="flex items-center gap-1 mb-1">
-                            <h3
-                              class="text-sm font-bold text-gray-900 truncate"
-                            >
-                              SuperMarchent Shop
-                            </h3>
-                            <i
-                              class="fas fa-check-circle text-green-500 text-xs"
-                            ></i>
-                          </div>
-                          <div
-                            class="flex flex-wrap items-center gap-2 text-xs"
-                          >
-                            <div class="flex items-center gap-1 text-gray-700">
-                              <img
-                                src="{{ asset('assets/images/flag.svg') }}"
-                                alt="Country"
-                                class="w-3 h-3"
-                              />
-                              <span class="text-[10px] font-semibold"
-                                >Rojava</span
-                              >
-                            </div>
-                            <div
-                              class="flex items-center gap-1 text-orange-500 font-semibold"
-                            >
-                              <i class="fas fa-star text-xs"></i>
-                              <span class="text-[10px] font-semibold">5.0</span>
-                              <span class="text-gray-500 text-[10px]"
-                                >(3K)</span
-                              >
-                            </div>
-                          </div>
-                          <div class="mt-2">
-                            <span
-                              class="px-2 py-0.5 rounded-full bg-green-500 text-white text-[8px] font-semibold"
-                            >
-                              SHOP OPEN
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="outer-gray-container rounded-2xl">
-                    <div class="custom-card p-0 overflow-visible">
-                      <div class="relative">
-                        <img
-                          src="{{ asset('assets/images/part1.svg') }}"
-                          alt="Partner Shop"
-                          class="w-full h-32 object-cover rounded-t-2xl"
-                        />
-                        <div
-                          class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-red-500 font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10"
-                        >
-                          <i class="fas fa-heart text-sm"></i>
-                          <span class="text-gray-900 font-bold text-xs"
-                            >950</span
-                          >
-                        </div>
-                        <div class="absolute -bottom-8 left-3 z-20">
-                          <div class="relative">
-                            <div
-                              class="w-16 h-16 rounded-3xl border border-white overflow-hidden"
-                            >
-                              <img
-                                src="{{ asset('assets/images/part11.svg') }}"
-                                alt="Shop Logo"
-                                class="w-[83px] object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="p-3 pt-6">
-                        <div class="flex-1 min-w-0 ml-20">
-                          <div class="flex items-center gap-1 mb-1">
-                            <h3
-                              class="text-sm font-bold text-gray-900 truncate"
-                            >
-                              SuperMarchent Shop
-                            </h3>
-                            <i
-                              class="fas fa-check-circle text-green-500 text-xs"
-                            ></i>
-                          </div>
-                          <div
-                            class="flex flex-wrap items-center gap-2 text-xs"
-                          >
-                            <div class="flex items-center gap-1 text-gray-700">
-                              <img
-                                src="{{ asset('assets/images/flag.svg') }}"
-                                alt="Country"
-                                class="w-3 h-3"
-                              />
-                              <span class="text-[10px] font-semibold"
-                                >Rojava</span
-                              >
-                            </div>
-                            <div
-                              class="flex items-center gap-1 text-orange-500 font-semibold"
-                            >
-                              <i class="fas fa-star text-xs"></i>
-                              <span class="text-[10px] font-semibold">5.0</span>
-                              <span class="text-gray-500 text-[10px]"
-                                >(3K)</span
-                              >
-                            </div>
-                          </div>
-                          <div class="mt-2">
-                            <span
-                              class="px-2 py-0.5 rounded-full bg-green-500 text-white text-[8px] font-semibold"
-                            >
-                              SHOP OPEN
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Panel -->
-            <div class="space-y-6">
-              <!-- My Cart Section -->
-              <div>
-                <div class="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 class="text-xl font-bold text-gray-900">My Cart</h3>
-                    <p class="text-gray-600 text-sm">Total Items: 3</p>
-                  </div>
-                  <button
-                    class="text-blue-600 text-sm font-medium flex items-center gap-1"
-                  >
-                    Show All
-                    <i class="fas fa-chevron-down text-xs"></i>
-                  </button>
-                </div>
-                <div id="cart-items" class="space-y-3">
-                  <!-- Cart items will be populated here -->
-                </div>
-              </div>
-
-              <!-- Payment Details Section -->
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 mb-4">
-                  Payment Details
-                </h3>
-                <div class="space-y-2 mb-4">
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-700">Account Upgrade:</span>
-                    <span class="font-semibold text-gray-900">R 50.00</span>
-                  </div>
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-700">Discount 0%:</span>
-                    <span class="font-semibold text-gray-900">R 0.00</span>
-                  </div>
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-700">Subtotal Net:</span>
-                    <span class="font-semibold text-gray-900">R 50.00</span>
-                  </div>
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-700 flex items-center gap-1">
-                      YekBun 10%:
-                      <i class="fas fa-info-circle text-green-500 text-xs"></i>
-                    </span>
-                    <span class="font-semibold text-gray-900">R 4.00</span>
-                  </div>
-                  <div
-                    class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200"
-                  >
-                    <span class="text-gray-900">To Pay:</span>
-                    <span class="text-green-600" id="cart-total">R 54.00</span>
-                  </div>
-                </div>
-
-                <!-- Checkout Button -->
-                <button
-                  onclick="checkout()"
-                  class="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg font-semibold transition-colors flex items-center justify-between px-6 mb-3"
-                >
-                  <div class="flex flex-col items-start">
-                    <span class="text-2xl font-bold">R 54.00</span>
-                    <span class="text-xs font-normal">Zer Payment</span>
-                  </div>
-                  <span class="text-lg">Checkout</span>
-                </button>
-
-                <!-- Cashback Info -->
-                <div
-                  class="flex items-center gap-2 text-green-600 text-sm font-medium"
-                >
-                  <img
-                    src="{{ asset('assets/images/currency.svg') }}"
-                    alt="Currency"
-                    class="w-4 h-4"
-                  />
-                  <span>R 25.00 Cashback after Checkout</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-    </div>
+    <!-- Mobile Cart Overlay -->
+    <div id="cartOverlay" onclick="toggleMobileCart()" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden"></div>
 
     <!-- Footer -->
-    <footer id="contact" class="bg-white border-t border-gray-200 py-6 px-6 ">
-      <div class="max-w-7xl mx-auto">
-        <!-- Bottom Copyright Bar -->
-        <div class="">
-          <div
-            class="flex flex-col md:flex-row justify-between items-center gap-4"
-          >
-            <!-- Left: Copyright -->
-            <p class="text-gray-600 text-sm">
-              Copyright @ 2025
-              <a
-                href="#"
-                class="text-blue-600 hover:text-blue-700 transition-colors font-semibold"
-                >lumen.tech</a
-              >. All Rights Reserved.
-            </p>
-
-            <!-- Right: Legal Links -->
-            <div class="flex items-center gap-4 text-sm">
-              <a
-                href="{{ route('legal-notice') }}"
-                class="text-gray-600 hover:text-blue-600 transition-colors"
-                >Lumen Legal Notice</a
-              >
-              <span class="text-gray-300">|</span>
-              <a
-                href="{{ route('terms') }}"
-                class="text-gray-600 hover:text-blue-600 transition-colors"
-                >Lumen Terms & Condition</a
-              >
-              <span class="text-gray-300">|</span>
-              <a
-                href="{{ route('contact') }}"
-                class="text-gray-600 hover:text-blue-600 transition-colors"
-                >Contact Lumen</a
-              >
+    <footer class="glass-card mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl overflow-hidden">
+                        <img src="./assets/img/logo.svg" alt="Logo" class="w-full h-full object-contain">
+                    </div>
+                    <span class="text-sm dark:text-gray-400 text-gray-600">2024 YekBun. All rights reserved.</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="text-sm dark:text-gray-400 text-gray-600 dark:hover:text-white hover:text-gray-900 transition-all">Privacy</a>
+                    <a href="#" class="text-sm dark:text-gray-400 text-gray-600 dark:hover:text-white hover:text-gray-900 transition-all">Terms</a>
+                    <a href="#" class="text-sm dark:text-gray-400 text-gray-600 dark:hover:text-white hover:text-gray-900 transition-all">Support</a>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </footer>
 
-    <script>
-      // Check if user is logged in
-      if (!sessionStorage.getItem("isLoggedIn")) {
-        window.location.href = "{{ route('login') }}";
-      }
+    <!-- Modal Popups -->
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">Welcome to YekBûn!</h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Before you can purchase playlists, streams, or other products, you need to buy <span class="font-bold text-emerald-600">Zer</span> first. Zer is the currency used for all transactions on YekBûn.
+                </p>
+                <div class="bg-emerald-50 rounded-2xl p-4 mb-6 border border-emerald-100">
+                    <div class="flex items-center justify-center gap-2">
+                        <img src="./assets/icons/currency.svg" alt="Zer" class="w-8 h-8">
+                        <span class="text-gray-700">Buy <span class="font-bold text-emerald-600">Zer Packs</span> to get started</span>
+                    </div>
+                </div>
+                <button onclick="closeWelcomeModal()" class="w-full py-3.5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all shadow-lg hover:shadow-xl">
+                    Got it!
+                </button>
+            </div>
+        </div>
+    </div>
 
-      // User data
-      let userData = {
-        name: "John Doe",
-        balance: 250,
-        accountType: "Free",
-        subscriptionActive: true,
-        cart: [],
-      };
+    <!-- Payment Sent Modal -->
+    <div id="paymentSentModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+            <div class="w-20 h-20 rounded-full bg-emerald-500 flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Payment Sent!</h3>
+            <p class="text-gray-500 mb-6">Your payment has been sent</p>
+            <button onclick="closeModal('paymentSentModal')" class="w-full py-3 rounded-full bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-all">
+                View E-Receipt
+            </button>
+        </div>
+    </div>
 
-      // Load user data
-      const savedData = localStorage.getItem("userData");
-      if (savedData) {
-        userData = JSON.parse(savedData);
-      }
+    <!-- Payment Failed Modal -->
+    <div id="paymentFailedModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+            <div class="w-20 h-20 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-red-500 mb-2">Payment Failed</h3>
+            <p class="text-gray-500 mb-6">Your payment failed. Please check your connection or your payment method.</p>
+            <button onclick="closeModal('paymentFailedModal')" class="w-full py-3 rounded-full bg-orange-500 text-white font-semibold hover:bg-orange-600 transition-all">
+                Try Again
+            </button>
+        </div>
+    </div>
 
-      // Update UI
-      function updateUI() {
-        const zerBalance = document.getElementById("zer-balance");
-        if (zerBalance) {
-          zerBalance.textContent = userData.balance + " Zer";
-        }
+    <!-- Please Note Modal -->
+    <div id="pleaseNoteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl border-4 border-red-400">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-red-400 flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold italic text-red-500 mb-2">Please Note</h3>
+            <p class="text-gray-500 mb-6">You can add only 1 time form this Section in your cart</p>
+            <button onclick="closeModal('pleaseNoteModal')" class="w-full py-3 rounded-full bg-orange-500 text-white font-semibold hover:bg-orange-600 transition-all uppercase tracking-wider">
+                Understood
+            </button>
+        </div>
+    </div>
 
-        const currentAccountType = document.getElementById(
-          "current-account-type"
-        );
-        if (currentAccountType) {
-          currentAccountType.textContent = userData.accountType;
-        }
+    <!-- Congratulations Package Activated Modal -->
+    <div id="packageActivatedModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-red-500 mb-2">Congratulations</h3>
+            <p class="text-gray-700 font-medium mb-4">Your Package is Activated now</p>
+            <div class="bg-gradient-to-b from-gray-100 to-gray-200 rounded-3xl p-4 mb-4 mx-auto max-w-[180px]">
+                <div class="bg-white rounded-2xl p-3 shadow-inner">
+                    <img src="./assets/img/logo.svg" alt="YekBun" class="w-12 h-12 mx-auto mb-2">
+                    <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center mx-auto">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">To ensure the upgrade is fully applied and visible on your account, please log out of YekBun and log in again to refresh your session.</p>
+            <button onclick="closeModal('packageActivatedModal')" class="px-8 py-2 rounded-full bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-all">
+                Allright
+            </button>
+        </div>
+    </div>
 
-        const accountType = document.getElementById("account-type");
-        if (accountType) {
-          accountType.textContent = userData.accountType + " Plan";
-        }
+    <!-- Congratulations Cashback Modal -->
+    <div id="cashbackModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center mx-auto mb-4 relative">
+                <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                </svg>
+                <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center border-2 border-white">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-red-500 mb-2">Congratulations</h3>
+            <p class="text-gray-700 mb-6">The cashback amount has been successfully credited to your balance.</p>
+            <button onclick="closeModal('cashbackModal')" class="px-8 py-2 rounded-full bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-all">
+                Allright
+            </button>
+        </div>
+    </div>
 
-        const cartCount = document.getElementById("cart-count");
-        if (cartCount) {
-          cartCount.textContent = userData.cart.length;
-        }
+    <!-- Auto Logout Modal -->
+    <div id="autoLogoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+            <div class="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Session Timeout</h3>
+            <p class="text-gray-600 mb-4 leading-relaxed">
+                You've been inactive for a while. For your security, you will be logged out automatically.
+            </p>
+            <div class="bg-red-50 rounded-2xl p-4 mb-6 border border-red-100">
+                <p class="text-gray-700">Logging out in <span id="logoutCountdown" class="font-bold text-red-500 text-2xl">15</span> seconds</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="stayOnline()" class="flex-1 py-3.5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all">
+                    Stay Online
+                </button>
+                <button onclick="logoutNow()" class="flex-1 py-3.5 bg-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-300 transition-all">
+                    Log Out
+                </button>
+            </div>
+        </div>
+    </div>
 
-        const headerCartCount = document.getElementById("header-cart-count");
-        if (headerCartCount) {
-          headerCartCount.textContent = userData.cart.length;
-          if (userData.cart.length === 0) {
-            headerCartCount.style.display = "none";
-          } else {
-            headerCartCount.style.display = "flex";
-          }
-        }
-
-        // Update sidebar cart count
-        const sidebarCartCount = document.getElementById("sidebar-cart-count");
-        if (sidebarCartCount) {
-          sidebarCartCount.textContent = userData.cart.length;
-          if (userData.cart.length === 0) {
-            sidebarCartCount.style.display = "none";
-          } else {
-            sidebarCartCount.style.display = "flex";
-          }
-        }
-
-        const subscriptionStatus = document.getElementById(
-          "subscription-status"
-        );
-        if (subscriptionStatus) {
-          subscriptionStatus.innerHTML = userData.subscriptionActive
-            ? '<i class="fas fa-check-circle"></i> Active'
-            : '<i class="fas fa-pause-circle"></i> Inactive';
-          subscriptionStatus.className = userData.subscriptionActive
-            ? "px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold"
-            : "px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold";
-        }
-
-        const subscriptionBtn = document.getElementById("subscription-btn");
-        if (subscriptionBtn) {
-          subscriptionBtn.innerHTML = userData.subscriptionActive
-            ? '<i class="fas fa-pause"></i> Deactivate Subscription'
-            : '<i class="fas fa-play"></i> Activate Subscription';
-          subscriptionBtn.className = userData.subscriptionActive
-            ? "w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold transition-colors"
-            : "w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold transition-colors";
-        }
-      }
-
-      // Upgrade Account
-      function upgradeAccount(plan, cost) {
-        if (userData.balance < cost) {
-          showAlert(
-            "error",
-            "You have no enough balance to upgrade your account. Please purchase more Zer credits."
-          );
-          return;
-        }
-
-        if (confirm(`Upgrade to ${plan} plan for ${cost} Zer?`)) {
-          userData.balance -= cost;
-          userData.accountType = plan;
-          localStorage.setItem("userData", JSON.stringify(userData));
-          updateUI();
-          showAlert("success", `Account upgraded to ${plan} successfully!`);
-        }
-      }
-
-      // Add to Cart
-      function addToCart(item, price) {
-        userData.cart.push({ item, price });
-        localStorage.setItem("userData", JSON.stringify(userData));
-        updateUI();
-        showAlert("success", `${item} added to cart!`);
-      }
-
-      // Show Cart
-      function showCart() {
-        const modal = document.getElementById("cart-modal");
-        const cartItems = document.getElementById("cart-items");
-        const cartTotal = document.getElementById("cart-total");
-
-        if (userData.cart.length === 0) {
-          cartItems.innerHTML =
-            '<p class="text-center text-gray-500 py-8">Your cart is empty</p>';
-          cartTotal.textContent = "R 0.00";
-        } else {
-          // Sample cart items matching the image
-          cartItems.innerHTML = `
-            <!-- Gold list -->
-            <div class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg bg-white">
-              <img src="{{ asset('assets/images/g14.svg') }}" alt="Gold list" class="w-12 h-12 flex-shrink-0">
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 text-sm mb-1">Gold list</h4>
-                <p class="text-gray-600 text-xs mb-2">Upgrade your Playlist & get 100....</p>
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-bold text-gray-900">R 475.00</span>
-                  <span class="text-xs text-gray-400 line-through">R 500.00</span>
-                  <span class="text-xs text-green-600 font-medium">R 25.00</span>
+    <!-- Billing Modal -->
+    <div id="billingModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">Billing History</h3>
+                <button onclick="closeModal('billingModal')" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-all">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-3 overflow-y-auto hide-scrollbar flex-1 pr-1">
+                <!-- Invoice 1 -->
+                <div class="border border-gray-200 rounded-2xl p-4 hover:border-emerald-300 transition-all bg-gray-50">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-gray-900 truncate">Gold Pack - 1000 Zer</p>
+                                <p class="text-xs text-gray-500">03.02.2026 - 14:32</p>
+                                <p class="text-xs text-gray-400 mt-1">#INV-2026-0234</p>
+                            </div>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="font-bold text-emerald-500 text-lg">€ 49,99</span>
+                            <div class="flex items-center gap-1 mt-2">
+                                <button class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-all" title="View">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </button>
+                                <button class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center hover:bg-emerald-200 transition-all" title="Download PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
-            </div>
-            
-            <!-- Gold -->
-            <div class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg bg-white">
-              <img src="{{ asset('assets/images/coins.svg') }}" alt="Gold" class="w-12 h-12 flex-shrink-0">
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 text-sm mb-1">Gold</h4>
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-bold text-gray-900">R 5000.00</span>
-                  <span class="text-xs text-gray-600">€ 49.99</span>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Silver Stream -->
-            <div class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg bg-white">
-              <img src="{{ asset('assets/images/g16.svg') }}" alt="Silver Stream" class="w-12 h-12 flex-shrink-0">
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 text-sm mb-1">Silver Stream</h4>
-                <p class="text-gray-600 text-xs mb-2">2000 Min</p>
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-bold text-gray-900">R 475.00</span>
-                  <span class="text-xs text-gray-400 line-through">R 500.00</span>
-                  <span class="text-xs text-green-600 font-medium">R 25.00</span>
+
+                <!-- Invoice 2 -->
+                <div class="border border-gray-200 rounded-2xl p-4 hover:border-emerald-300 transition-all bg-gray-50">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-gray-900 truncate">Academic Plan - Monthly</p>
+                                <p class="text-xs text-gray-500">25.01.2026 - 10:15</p>
+                                <p class="text-xs text-gray-400 mt-1">#INV-2026-0198</p>
+                            </div>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="font-bold text-emerald-500 text-lg">€ 29,99</span>
+                            <div class="flex items-center gap-1 mt-2">
+                                <button class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-all" title="View">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </button>
+                                <button class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center hover:bg-emerald-200 transition-all" title="Download PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Academic Access -->
-            <div class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg bg-white">
-              <img src="{{ asset('assets/images/academic.svg') }}" alt="Academic Access" class="w-12 h-12 flex-shrink-0">
-              <div class="flex-1">
-                <div class="flex items-center justify-between mb-1">
-                  <h4 class="font-semibold text-gray-900 text-sm">Academic Access</h4>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer" checked>
-                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
-                  </label>
+
+                <!-- Invoice 3 -->
+                <div class="border border-gray-200 rounded-2xl p-4 hover:border-emerald-300 transition-all bg-gray-50">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-gray-900 truncate">Silver Pack - 500 Zer</p>
+                                <p class="text-xs text-gray-500">15.01.2026 - 18:45</p>
+                                <p class="text-xs text-gray-400 mt-1">#INV-2026-0156</p>
+                            </div>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="font-bold text-emerald-500 text-lg">€ 24,99</span>
+                            <div class="flex items-center gap-1 mt-2">
+                                <button class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-all" title="View">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </button>
+                                <button class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center hover:bg-emerald-200 transition-all" title="Download PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-gray-600 text-xs mb-2">Monthly Auto Renew</p>
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-bold text-gray-900">R 475.00</span>
-                  <span class="text-xs text-gray-400 line-through">R 500.00</span>
-                  <span class="text-xs text-green-600 font-medium">R 25.00</span>
+
+                <!-- Invoice 4 -->
+                <div class="border border-gray-200 rounded-2xl p-4 hover:border-emerald-300 transition-all bg-gray-50">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-gray-900 truncate">Gold Playlist - 100 Songs</p>
+                                <p class="text-xs text-gray-500">01.01.2026 - 09:20</p>
+                                <p class="text-xs text-gray-400 mt-1">#INV-2026-0089</p>
+                            </div>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="font-bold text-emerald-500 text-lg">€ 19,99</span>
+                            <div class="flex items-center gap-1 mt-2">
+                                <button class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-all" title="View">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </button>
+                                <button class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center hover:bg-emerald-200 transition-all" title="Download PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
+
+                <!-- Invoice 5 -->
+                <div class="border border-gray-200 rounded-2xl p-4 hover:border-emerald-300 transition-all bg-gray-50">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-gray-900 truncate">Bronze Stream - 500 Min</p>
+                                <p class="text-xs text-gray-500">20.12.2025 - 16:00</p>
+                                <p class="text-xs text-gray-400 mt-1">#INV-2025-0945</p>
+                            </div>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="font-bold text-emerald-500 text-lg">€ 9,99</span>
+                            <div class="flex items-center gap-1 mt-2">
+                                <button class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-all" title="View">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </button>
+                                <button class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center hover:bg-emerald-200 transition-all" title="Download PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          `;
 
-          // Update total
-          cartTotal.textContent = "R 54.00";
+            <div class="mt-6 pt-4 border-t border-gray-200 bg-white">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600 font-medium">Total Spent</span>
+                    <span class="text-2xl font-bold text-emerald-500">€ 134,95</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            html.classList.toggle('dark', savedTheme === 'dark');
         }
+        
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
 
-        modal.classList.remove("hidden");
-      }
-
-      // Close Cart
-      function closeCart() {
-        document.getElementById("cart-modal").classList.add("hidden");
-      }
-
-      // Remove from Cart
-      function removeFromCart(index) {
-        userData.cart.splice(index, 1);
-        localStorage.setItem("userData", JSON.stringify(userData));
-        updateUI();
-        showCart();
-      }
-
-      // Checkout
-      function checkout() {
-        if (userData.cart.length === 0) {
-          showAlert("error", "Your cart is empty");
-          return;
-        }
-        // Redirect to checkout page
-        window.location.href = "{{ route('checkout') }}";
-      }
-
-      // Toggle Subscription
-      function toggleSubscription() {
-        userData.subscriptionActive = !userData.subscriptionActive;
-        localStorage.setItem("userData", JSON.stringify(userData));
-        updateUI();
-
-        if (userData.subscriptionActive) {
-          showAlert("success", "Subscription activated successfully!");
-        } else {
-          showAlert("success", "Subscription deactivated successfully!");
-        }
-      }
-
-      // Show Alert
-      function showAlert(type, message) {
-        const alert = document.createElement("div");
-        alert.className = `alert ${
-          type === "success" ? "bg-green-500" : "bg-red-500"
-        } text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3`;
-        alert.innerHTML = `
-                <i class="fas ${
-                  type === "success"
-                    ? "fa-check-circle"
-                    : "fa-exclamation-circle"
-                } text-xl"></i>
-                <span>${message}</span>
-            `;
-
-        document.body.appendChild(alert);
-
-        setTimeout(() => {
-          alert.style.animation = "slideInRight 0.3s ease-out reverse";
-          setTimeout(() => alert.remove(), 300);
-        }, 3000);
-      }
-
-      // Logout
-      const logoutBtn = document.getElementById("logout-btn");
-      const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
-
-      function handleLogout() {
-        if (confirm("Are you sure you want to logout?")) {
-          sessionStorage.removeItem("isLoggedIn");
-          sessionStorage.removeItem("userEmail");
-          window.location.href = "{{ route('home') }}";
-        }
-      }
-
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", handleLogout);
-      }
-      if (mobileLogoutBtn) {
-        mobileLogoutBtn.addEventListener("click", handleLogout);
-      }
-
-      // Update mobile user info
-      function updateMobileUserInfo() {
-        const mobileUserName = document.getElementById("mobile-user-name");
-        const mobileAccountType = document.getElementById(
-          "mobile-account-type"
-        );
-        const mobileUserAvatar = document.getElementById("mobile-user-avatar");
-
-        if (mobileUserName) mobileUserName.textContent = userData.name;
-        if (mobileAccountType)
-          mobileAccountType.textContent = userData.accountType + " Plan";
-        if (mobileUserAvatar) {
-          const initials = userData.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase();
-          mobileUserAvatar.textContent = initials;
-        }
-      }
-
-      // Sidebar Toggle for Medium Devices
-      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
-      const sidebarMd = document.getElementById("sidebar-md");
-      const sidebarOverlay = document.getElementById("sidebar-overlay");
-      const sidebarClose = document.getElementById("sidebar-close");
-
-      function openSidebar() {
-        if (sidebarMd && sidebarOverlay) {
-          // Remove translate-x-full to slide it in from right
-          sidebarMd.classList.remove("translate-x-full");
-          sidebarMd.classList.add("translate-x-0");
-          // Show overlay
-          sidebarOverlay.classList.remove("hidden");
-        }
-      }
-
-      function closeSidebar() {
-        if (sidebarMd && sidebarOverlay) {
-          // Slide sidebar out to the right
-          sidebarMd.classList.add("translate-x-full");
-          sidebarMd.classList.remove("translate-x-0");
-          // Hide overlay
-          sidebarOverlay.classList.add("hidden");
-        }
-      }
-
-      if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener("click", openSidebar);
-      }
-
-      if (sidebarClose) {
-        sidebarClose.addEventListener("click", closeSidebar);
-      }
-
-      if (sidebarOverlay) {
-        sidebarOverlay.addEventListener("click", closeSidebar);
-      }
-
-      // Dashboard Pricing Toggle Functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        const toggleWrapper = document.getElementById("dashboard-plan-toggle");
-        const monthlyCard = document.getElementById("dashboard-monthly-card");
-        const yearlyCard = document.getElementById("dashboard-yearly-card");
-        const slider = toggleWrapper ? toggleWrapper.querySelector(".dashboard-toggle-slider") : null;
-        const dashboardPriceElements = document.querySelectorAll(
-          ".dashboard-price-value"
-        );
-
-        let isYearly = false;
-
-        function updateToggleState() {
-          if (isYearly) {
-            // Yearly is active
-            monthlyCard.classList.remove("active");
-            yearlyCard.classList.add("active");
-            
-            // Move slider to yearly position
-            if (slider && monthlyCard && yearlyCard) {
-              const wrapperPadding = 4;
-              slider.style.left = (monthlyCard.offsetWidth + wrapperPadding) + "px";
-              slider.style.width = yearlyCard.offsetWidth + "px";
-            }
-          } else {
-            // Monthly is active
-            monthlyCard.classList.add("active");
-            yearlyCard.classList.remove("active");
-            
-            // Move slider to monthly position
-            if (slider && monthlyCard) {
-              slider.style.left = "4px";
-              slider.style.width = monthlyCard.offsetWidth + "px";
-            }
-          }
-
-          // Update prices
-          dashboardPriceElements.forEach((priceEl) => {
-            if (isYearly) {
-              priceEl.textContent = priceEl.getAttribute("data-yearly");
-            } else {
-              priceEl.textContent = priceEl.getAttribute("data-monthly");
-            }
-          });
-        }
-
-        if (monthlyCard && yearlyCard) {
-          // Initialize slider width and position
-          if (slider) {
+        if (!localStorage.getItem('welcomeShown')) {
             setTimeout(() => {
-              slider.style.left = "4px";
-              slider.style.width = monthlyCard.offsetWidth + "px";
-            }, 0);
-          }
-
-          monthlyCard.addEventListener("click", function () {
-            isYearly = false;
-            updateToggleState();
-          });
-
-          yearlyCard.addEventListener("click", function () {
-            isYearly = true;
-            updateToggleState();
-          });
-
-          // Initialize (monthly is default)
-          updateToggleState();
+                document.getElementById('welcomeModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }, 500);
         }
 
-        // Playlist Monthly/Yearly Toggle (Upgrade Music Playlist cards)
-        const playlistToggleGroups = document.querySelectorAll(
-          "[data-playlist-toggle]"
-        );
+        function closeWelcomeModal() {
+            document.getElementById('welcomeModal').classList.add('hidden');
+            document.body.style.overflow = '';
+            localStorage.setItem('welcomeShown', 'true');
+        }
 
-        function setPlaylistPeriod(toggleGroup, period) {
-          const card = toggleGroup.closest("[data-playlist-card]");
-          if (!card) return;
-
-          const priceEl = card.querySelector("[data-playlist-price]");
-          if (!priceEl) return;
-
-          const monthlyBtn = toggleGroup.querySelector(
-            '[data-period="monthly"]'
-          );
-          const yearlyBtn = toggleGroup.querySelector('[data-period="yearly"]');
-          const slider = toggleGroup.querySelector(".toggle-slider");
-
-          // Update button active states
-          if (monthlyBtn && yearlyBtn) {
-            if (period === "yearly") {
-              yearlyBtn.classList.add("active");
-              monthlyBtn.classList.remove("active");
-              toggleGroup.classList.add("yearly");
+        let mobileCartOpen = false;
+        function toggleMobileCart() {
+            const cartPanel = document.getElementById('cartPanel');
+            const cartOverlay = document.getElementById('cartOverlay');
+            mobileCartOpen = !mobileCartOpen;
+            
+            if (mobileCartOpen) {
+                cartPanel.classList.remove('translate-y-full');
+                cartPanel.classList.add('translate-y-0');
+                cartOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             } else {
-              monthlyBtn.classList.add("active");
-              yearlyBtn.classList.remove("active");
-              toggleGroup.classList.remove("yearly");
+                cartPanel.classList.add('translate-y-full');
+                cartPanel.classList.remove('translate-y-0');
+                cartOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
             }
-          }
+        }
 
-          // Update slider position and width
-          if (slider && monthlyBtn && yearlyBtn) {
-            const activeBtn = period === "yearly" ? yearlyBtn : monthlyBtn;
-            const wrapperPadding =
-              parseInt(window.getComputedStyle(toggleGroup).paddingLeft) || 3;
+        const langDropdownBtn = document.getElementById('langDropdownBtn');
+        const langDropdown = document.getElementById('langDropdown');
+        
+        langDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.classList.toggle('hidden');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!langDropdown.contains(e.target) && !langDropdownBtn.contains(e.target)) {
+                langDropdown.classList.add('hidden');
+            }
+        });
 
-            if (period === "yearly") {
-              slider.style.left =
-                monthlyBtn.offsetWidth + wrapperPadding + "px";
-              slider.style.width = yearlyBtn.offsetWidth + "px";
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function removeCartItem(button) {
+            const cartItem = button.closest('.flex.items-center.gap-3');
+            if (cartItem) {
+                cartItem.style.transition = 'all 0.3s ease';
+                cartItem.style.opacity = '0';
+                cartItem.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    cartItem.remove();
+                    checkEmptyCart();
+                }, 300);
+            }
+        }
+
+        function checkEmptyCart() {
+            const cartItems = document.getElementById('cartItems');
+            const existingEmpty = document.getElementById('emptyCartMessage');
+            if (cartItems && cartItems.children.length === 0 && !existingEmpty) {
+                cartItems.innerHTML = `
+                    <div id="emptyCartMessage" class="flex flex-col items-center justify-center py-8 text-center">
+                        <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <p class="text-gray-500 mb-4">Your cart is empty</p>
+                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-all">
+                            Continue Shopping
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        let inactivityTimeout;
+        let logoutCountdownInterval;
+        let countdownSeconds = 15;
+        const INACTIVITY_TIME = 5 * 60 * 1000; // 5 minutes
+
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimeout);
+            inactivityTimeout = setTimeout(showAutoLogoutModal, INACTIVITY_TIME);
+        }
+
+        function showAutoLogoutModal() {
+            countdownSeconds = 15;
+            document.getElementById('logoutCountdown').textContent = countdownSeconds;
+            document.getElementById('autoLogoutModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            logoutCountdownInterval = setInterval(() => {
+                countdownSeconds--;
+                document.getElementById('logoutCountdown').textContent = countdownSeconds;
+                if (countdownSeconds <= 0) {
+                    clearInterval(logoutCountdownInterval);
+                    logoutNow();
+                }
+            }, 1000);
+        }
+
+        function stayOnline() {
+            clearInterval(logoutCountdownInterval);
+            document.getElementById('autoLogoutModal').classList.add('hidden');
+            document.body.style.overflow = '';
+            resetInactivityTimer();
+        }
+
+        function logoutNow() {
+            clearInterval(logoutCountdownInterval);
+            window.location.href = 'logout.html';
+        }
+
+        ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer);
+        });
+
+        resetInactivityTimer();
+
+        const subscribeToggle = document.getElementById('subscribeToggle');
+        const subscribeStatus = document.getElementById('subscribeStatus');
+        
+        subscribeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                subscribeStatus.textContent = 'Subscribed';
+                subscribeStatus.classList.remove('text-gray-400');
+                subscribeStatus.classList.add('text-emerald-400');
             } else {
-              slider.style.left = wrapperPadding + "px";
-              slider.style.width = monthlyBtn.offsetWidth + "px";
+                subscribeStatus.textContent = 'Unsubscribed';
+                subscribeStatus.classList.remove('text-emerald-400');
+                subscribeStatus.classList.add('text-gray-400');
             }
-          }
-
-          // Update price text
-          const attr = period === "yearly" ? "data-yearly" : "data-monthly";
-          const nextPrice = priceEl.getAttribute(attr);
-          if (nextPrice) priceEl.textContent = nextPrice;
-        }
-
-        playlistToggleGroups.forEach((toggleGroup) => {
-          const monthlyBtn = toggleGroup.querySelector(
-            '[data-period="monthly"]'
-          );
-          const yearlyBtn = toggleGroup.querySelector('[data-period="yearly"]');
-          const slider = toggleGroup.querySelector(".toggle-slider");
-
-          // Set initial slider width and position
-          if (slider && monthlyBtn) {
-            setTimeout(() => {
-              const wrapperPadding =
-                parseInt(window.getComputedStyle(toggleGroup).paddingLeft) || 3;
-              slider.style.left = wrapperPadding + "px";
-              slider.style.width = monthlyBtn.offsetWidth + "px";
-            }, 0);
-          }
-
-          if (monthlyBtn) {
-            monthlyBtn.addEventListener("click", () => {
-              setPlaylistPeriod(toggleGroup, "monthly");
-            });
-          }
-          if (yearlyBtn) {
-            yearlyBtn.addEventListener("click", () => {
-              setPlaylistPeriod(toggleGroup, "yearly");
-            });
-          }
-
-          // Initialize (monthly default)
-          setPlaylistPeriod(toggleGroup, "monthly");
         });
-      });
-
-      // Sidebar Language Dropdown
-      const sidebarLanguageBtn = document.getElementById(
-        "sidebar-language-btn"
-      );
-      const sidebarLanguageDropdown = document.getElementById(
-        "sidebar-language-dropdown"
-      );
-      const sidebarLanguageOptions = document.querySelectorAll(
-        ".sidebar-language-option"
-      );
-
-      if (sidebarLanguageBtn && sidebarLanguageDropdown) {
-        sidebarLanguageBtn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          sidebarLanguageDropdown.classList.toggle("hidden");
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (e) {
-          if (
-            sidebarLanguageDropdown &&
-            !sidebarLanguageDropdown.contains(e.target) &&
-            !sidebarLanguageBtn.contains(e.target)
-          ) {
-            sidebarLanguageDropdown.classList.add("hidden");
-          }
-        });
-
-        // Handle language selection
-        sidebarLanguageOptions.forEach((option) => {
-          option.addEventListener("click", function (e) {
-            e.preventDefault();
-            const lang = this.getAttribute("data-lang");
-            const sidebarCurrentLang = document.getElementById(
-              "sidebar-current-lang"
-            );
-            const currentLang = document.getElementById("current-lang");
-
-            // Update sidebar language display
-            if (sidebarCurrentLang) {
-              sidebarCurrentLang.textContent = lang;
-            }
-            // Update header language display
-            if (currentLang) {
-              currentLang.textContent = lang;
-            }
-
-            // Update checkmarks
-            document.querySelectorAll("[data-check]").forEach((check) => {
-              check.classList.add("hidden");
-            });
-            const selectedCheck = document.querySelector(
-              `[data-check="${lang}"]`
-            );
-            if (selectedCheck) {
-              selectedCheck.classList.remove("hidden");
-            }
-
-            // Hide dropdown
-            sidebarLanguageDropdown.classList.add("hidden");
-          });
-        });
-      }
-
-      // Sidebar Logout Button
-      const sidebarLogoutBtn = document.getElementById("sidebar-logout-btn");
-      if (sidebarLogoutBtn) {
-        sidebarLogoutBtn.addEventListener("click", function () {
-          if (confirm("Are you sure you want to logout?")) {
-            sessionStorage.removeItem("isLoggedIn");
-            localStorage.removeItem("userData");
-            window.location.href = "{{ route('login') }}";
-          }
-        });
-      }
-
-      // Update Sidebar User Info
-      function updateSidebarUserInfo() {
-        const sidebarUserName = document.getElementById("sidebar-user-name");
-        const sidebarAccountType = document.getElementById(
-          "sidebar-account-type"
-        );
-        const sidebarUserAvatar = document.getElementById(
-          "sidebar-user-avatar"
-        );
-
-        if (sidebarUserName) sidebarUserName.textContent = userData.name;
-        if (sidebarAccountType)
-          sidebarAccountType.textContent = userData.accountType + " Plan";
-        if (sidebarUserAvatar) {
-          const initials = userData.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase();
-          sidebarUserAvatar.textContent = initials;
-        }
-      }
-
-      // Initialize
-      updateUI();
-      updateMobileUserInfo();
-      updateSidebarUserInfo();
-
-      // Header scroll effect
-      const header = document.querySelector("header");
-
-      if (header) {
-        window.addEventListener("scroll", () => {
-          const currentScroll = window.pageYOffset || window.scrollY;
-
-          if (currentScroll > 50) {
-            header.classList.add("scrolled");
-          } else {
-            header.classList.remove("scrolled");
-          }
-        });
-
-        // Check on page load in case page is already scrolled
-        if (window.pageYOffset > 50 || window.scrollY > 50) {
-          header.classList.add("scrolled");
-        }
-      }
     </script>
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
-  </body>
+</body>
 </html>
