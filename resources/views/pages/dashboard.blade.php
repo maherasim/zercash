@@ -129,6 +129,16 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3 sm:gap-6">
+                    <button id="themeToggle" class="theme-toggle cursor-pointer" aria-label="Toggle theme">
+                        <div class="theme-toggle-circle">
+                            <svg class="w-3 h-3 text-gray-700 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                            </svg>
+                            <svg class="w-3 h-3 text-indigo-600 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                        </div>
+                    </button>
                     <div class="relative" id="langDropdownContainer">
                         <button id="langDropdownBtn" class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
                             <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,7 +180,7 @@
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">John Doe</span>
                         <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-sm font-semibold">JD</div>
                     </div>
-                    <a href="{{ route('home') }}" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-full transition-all">
+                    <a href="{{ route('login') }}" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-full transition-all">
                         Logout
                     </a>
                 </div>
@@ -1460,17 +1470,18 @@
     </div>
     
     <script>
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        
-        const savedTheme = localStorage.getItem('theme');
+        (function() {
+        var html = document.documentElement;
+        var savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
             html.classList.toggle('dark', savedTheme === 'dark');
         }
-        
-        themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        document.addEventListener('click', function(e) {
+            var btn = e.target && e.target.closest && (e.target.closest('#themeToggle') || e.target.closest('.theme-toggle'));
+            if (btn) {
+                html.classList.toggle('dark');
+                localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            }
         });
 
         if (!localStorage.getItem('welcomeShown')) {
@@ -1505,19 +1516,19 @@
             }
         }
 
-        const langDropdownBtn = document.getElementById('langDropdownBtn');
-        const langDropdown = document.getElementById('langDropdown');
-        
-        langDropdownBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            langDropdown.classList.toggle('hidden');
-        });
-        
-        document.addEventListener('click', (e) => {
-            if (!langDropdown.contains(e.target) && !langDropdownBtn.contains(e.target)) {
-                langDropdown.classList.add('hidden');
-            }
-        });
+        var langDropdownBtn = document.getElementById('langDropdownBtn');
+        var langDropdown = document.getElementById('langDropdown');
+        if (langDropdownBtn && langDropdown) {
+            langDropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                langDropdown.classList.toggle('hidden');
+            });
+            document.addEventListener('click', function(e) {
+                if (!langDropdown.contains(e.target) && !langDropdownBtn.contains(e.target)) {
+                    langDropdown.classList.add('hidden');
+                }
+            });
+        }
 
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
@@ -1571,7 +1582,7 @@
         let inactivityTimeout;
         let logoutCountdownInterval;
         let countdownSeconds = 15;
-        const INACTIVITY_TIME = 5 * 60 * 1000; // 5 minutes
+        var INACTIVITY_TIME = 10 * 1000; // 30 sec for testing; use 5*60*1000 for 5 min
 
         function resetInactivityTimer() {
             clearTimeout(inactivityTimeout);
@@ -1602,30 +1613,34 @@
         }
 
         function logoutNow() {
-            clearInterval(logoutCountdownInterval);
-            window.location.href = "{{ route('home') }}";
+            if (logoutCountdownInterval) clearInterval(logoutCountdownInterval);
+            window.location.href = "{{ route('login') }}";
         }
 
-        ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
-            document.addEventListener(event, resetInactivityTimer);
-        });
-
+        var events = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart', 'click'];
+        for (var i = 0; i < events.length; i++) {
+            document.addEventListener(events[i], resetInactivityTimer);
+        }
         resetInactivityTimer();
 
-        const subscribeToggle = document.getElementById('subscribeToggle');
-        const subscribeStatus = document.getElementById('subscribeStatus');
-        
-        subscribeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                subscribeStatus.textContent = 'Subscribed';
-                subscribeStatus.classList.remove('text-gray-400');
-                subscribeStatus.classList.add('text-emerald-400');
-            } else {
-                subscribeStatus.textContent = 'Unsubscribed';
-                subscribeStatus.classList.remove('text-emerald-400');
-                subscribeStatus.classList.add('text-gray-400');
-            }
-        });
+        var subscribeToggle = document.getElementById('subscribeToggle');
+        var subscribeStatus = document.getElementById('subscribeStatus');
+        if (subscribeToggle && subscribeStatus) {
+            subscribeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    subscribeStatus.textContent = 'Subscribed';
+                    subscribeStatus.classList.remove('text-gray-400');
+                    subscribeStatus.classList.add('text-emerald-400');
+                } else {
+                    subscribeStatus.textContent = 'Unsubscribed';
+                    subscribeStatus.classList.remove('text-emerald-400');
+                    subscribeStatus.classList.add('text-gray-400');
+                }
+            });
+        }
+        window.stayOnline = stayOnline;
+        window.logoutNow = logoutNow;
+        })();
     </script>
 </body>
 </html>
