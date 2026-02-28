@@ -1640,6 +1640,7 @@
         }
         window.stayOnline = stayOnline;
         window.logoutNow = logoutNow;
+        window.closeWelcomeModal = closeWelcomeModal;
         })();
     </script>
 </body>
