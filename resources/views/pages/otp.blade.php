@@ -28,7 +28,7 @@
                     <div class="text-center mb-4">
                         <p class="text-gray-600 text-sm">Resend code in <span id="timer" class="font-semibold text-indigo-600">60</span>s</p>
                     </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-3.5 rounded-xl font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg">
+                    <button type="submit" id="verify-otp-btn" class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-3.5 rounded-xl font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg disabled:opacity-70 disabled:cursor-not-allowed">
                         Verify OTP
                     </button>
                     <div class="text-center">
@@ -48,10 +48,14 @@
 @push('scripts')
 <script>
 (function() {
-    const email = sessionStorage.getItem("loginEmail") || "your.email@example.com";
+    var email = sessionStorage.getItem("loginEmail") || "";
+    if (!email) {
+        window.location.href = "{{ route('login') }}";
+        return;
+    }
     document.getElementById("email-display").textContent = "Code sent to " + email;
 
-    const otpInputs = document.querySelectorAll(".otp-input");
+    var otpInputs = document.querySelectorAll(".otp-input");
     otpInputs.forEach(function(input, index) {
         input.addEventListener("input", function(e) {
             if (e.target.value.length === 1 && index < otpInputs.length - 1) otpInputs[index + 1].focus();
@@ -91,16 +95,38 @@
     });
 
     document.getElementById("otp-form").addEventListener("submit", function(e) {
+        e.preventDefault();
         var otp = Array.from(otpInputs).map(function(i) { return i.value; }).join("");
         if (otp.length !== 6) {
-            e.preventDefault();
             alert("Please enter complete OTP code");
-        } else {
-            e.preventDefault();
-            sessionStorage.setItem("isLoggedIn", "true");
-            sessionStorage.setItem("userEmail", email);
-            window.location.href = "{{ route('dashboard') }}";
+            return;
         }
+        var btn = document.getElementById("verify-otp-btn");
+        btn.disabled = true;
+        btn.textContent = "Verifying...";
+        fetch("https://admin.yekbun.net/api/verify-currency-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ email: email, otp: otp })
+        })
+        .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, status: res.status, data: data }; }); })
+        .then(function(result) {
+            if (result.ok) {
+                sessionStorage.setItem("isLoggedIn", "true");
+                sessionStorage.setItem("userEmail", email);
+                window.location.href = result.data && result.data.redirect ? result.data.redirect : "{{ route('dashboard') }}";
+            } else {
+                var msg = (result.data && (result.data.message || result.data.error)) || "Invalid or expired OTP. Please try again.";
+                alert(msg);
+                btn.disabled = false;
+                btn.textContent = "Verify OTP";
+            }
+        })
+        .catch(function() {
+            alert("Connection error. Please try again.");
+            btn.disabled = false;
+            btn.textContent = "Verify OTP";
+        });
     });
 })();
 </script>

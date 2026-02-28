@@ -35,7 +35,7 @@
                             By continuing you agree to our <a href="{{ route('terms') }}" target="_blank" class="text-indigo-600 font-semibold hover:underline">Terms of Service</a>
                         </label>
                     </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <button type="submit" id="login-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-70 disabled:cursor-not-allowed">
                         Continue
                     </button>
                 </form>
@@ -55,14 +55,37 @@
 <script>
 document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    const email = document.getElementById('email').value;
-    const terms = document.getElementById('terms').checked;
+    var email = document.getElementById('email').value.trim();
+    var terms = document.getElementById('terms').checked;
     if (!terms) {
         alert('Please agree to the Terms of Service to continue');
         return;
     }
-    sessionStorage.setItem('loginEmail', email);
-    window.location.href = '{{ route('otp') }}';
+    var btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    fetch('https://admin.yekbun.net/api/currency-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email: email })
+    })
+    .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, status: res.status, data: data }; }); })
+    .then(function(result) {
+        if (result.ok) {
+            sessionStorage.setItem('loginEmail', email);
+            window.location.href = '{{ route('otp') }}';
+        } else {
+            var msg = (result.data && (result.data.message || result.data.error)) || 'Something went wrong. Please try again.';
+            alert(msg);
+            btn.disabled = false;
+            btn.textContent = 'Continue';
+        }
+    })
+    .catch(function() {
+        alert('Connection error. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Continue';
+    });
 });
 </script>
 @endpush
