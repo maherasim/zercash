@@ -1582,7 +1582,7 @@
         let inactivityTimeout;
         let logoutCountdownInterval;
         let countdownSeconds = 15;
-        var INACTIVITY_TIME = 10 * 1000; // 30 sec for testing; use 5*60*1000 for 5 min
+        var INACTIVITY_TIME = 30 * 1000; // 30 sec for testing; use 5*60*1000 for 5 min
 
         function resetInactivityTimer() {
             clearTimeout(inactivityTimeout);
